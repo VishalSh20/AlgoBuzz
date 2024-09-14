@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <div className="flex flex-col w-full min-h-screen items-center bg-violet-200">
       {/* Hero Section */}
-      <header className="flex flex-col w-full items-center justify-center text-center p-8 bg-gradient-to-r from-blue-500 to-red-500 text-black min-h-[50vh]">
+      <header className="flex flex-col w-full items-center justify-center text-center p-8 bg-gradient-to-r from-blue-500 to-fuchsia-400 text-black min-h-[50vh]">
         <h1 className="text-5xl font-serif font-bold mb-4 text-purple-600">GS CODESOLVER</h1>
         <p className="text-xl font-serif mb-6 max-w-2xl mx-auto text-gray-800">
           Your one-stop coding solution for all your programming needs. Simplify your workflow and solve coding challenges effortlessly with our intuitive tools and resources.
@@ -18,10 +18,10 @@ export default function Home() {
       </header>
 
       {/* Features Section */}
-      <section className="flex flex-col md:flex-row items-center mt-8 w-[90%] max-w-4xl text-black">
+      <section className="flex flex-col items-center mt-8 w-[90%] max-w-4xl text-black">
         <h2 className="text-3xl font-serif font-semibold text-purple-600 mb-6">Our Features</h2>
-        <div className="flex flex-wrap gap-4 p-2">
-          <Link href="/ide">
+        <div className="flex flex-wrap items-center gap-4 p-2 w-full">
+          <Link href="/ide" className='sm:w-1/2 md:w-1/3'>
             <span className="flex flex-col justify-center items-center bg-purple-200 p-6 rounded-lg shadow-lg hover:bg-purple-300 transition cursor-pointer">
               <FaCode className="text-4xl mb-2 text-purple-600" />
               <span className="font-serif text-xl">IDE</span>
@@ -31,7 +31,7 @@ export default function Home() {
             </span>
           </Link>
 
-          <Link href="/dropnsolve">
+          <Link href="/dropnsolve" className='sm:w-1/2 md:w-1/3'>
             <span className="flex flex-col justify-center items-center bg-purple-200 p-6 rounded-lg shadow-lg hover:bg-purple-300 transition cursor-pointer">
               <FaDropbox className="text-4xl mb-2 text-purple-600" />
               <span className="font-serif text-xl">DropnSolve</span>
@@ -41,6 +41,7 @@ export default function Home() {
             </span>
           </Link>
         </div>
+
       </section>
     </div>
   );
