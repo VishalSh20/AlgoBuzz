@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
+    "@prisma/client": "^5.19.1",
     "axios": "^1.7.7",
     "flowbite-react": "^0.10.1",
     "next": "14.2.11",
+    "prisma": "^5.19.1",
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1"

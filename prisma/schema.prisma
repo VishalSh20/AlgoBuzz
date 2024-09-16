@@ -1,0 +1,174 @@
+generator client {
+  provider  = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+model User {
+  id             String       @id
+  name           String
+  username       String       @unique
+  imageurl       String?
+  role           Role         @default(USER)
+  problemsSolved Int          @default(0)
+  contestRating  Int          @default(-1)
+  email          String       @unique
+  github         String?
+  linkedin       String?
+  Submissions    Submission[]
+}
+
+model Problem {
+  id          Int          @id @default(autoincrement())
+  title       String       @unique
+  slug        String       @unique
+  difficulty  Difficulty
+  topics      Topic[]
+  Statement   String
+  constraints String[]
+  examples    Example[]
+  submissions Submission[]
+  templates   Template[]
+  testcases   TestCase[]
+  solutions Solution[]
+  testCaseGeneratorId Int? @unique
+  TestCaseGenerator TestCaseGenerator? @relation(fields: [testCaseGeneratorId], references: [id])
+  testCaseValidatorId Int? @unique
+  Validator TestCaseValidator? @relation(fields: [testCaseValidatorId],references: [id])
+}
+
+model Example {
+  id           Int       @id @default(autoincrement())
+  ProblemId    Int
+  Explaination String
+  InputText    String
+  OutputText   String
+  Problem      Problem   @relation(fields: [ProblemId], references: [id], onDelete: Cascade)
+  testcaseId   Int?     @unique
+  Testcase     TestCase? @relation(fields: [testcaseId],references: [id])
+}
+
+model TestCase {
+  id        Int      @id @default(autoincrement())
+  input     String
+  output    String
+  ProblemId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Example   Example? 
+  Problem   Problem  @relation(fields: [ProblemId], references: [id], onDelete: Cascade)
+}
+
+model TestCaseGenerator{
+  id Int @id
+  code String
+  language Language
+  problem Problem?
+}
+
+model TestCaseValidator{
+  id Int @id
+  code String 
+  language Language
+  problem Problem?
+}
+
+model Submission {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  problemId  Int
+  code       String
+  language   String
+  status     Status
+  createdAt  DateTime @default(now())
+  memory     Float?
+  time_taken Int?
+  problem    Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Solution {
+  id Int @id
+  problemId Int 
+  code String
+  language Language
+  timeComplexity String
+  spaceComplexity String
+
+  Problem Problem @relation(fields: [problemId],references: [id])
+}
+
+model Template {
+  language  Language
+  editableCode  String
+  nonEditableCodes String[]
+  editableCodePosition Int
+  problemId Int
+  problem   Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@id([problemId, language])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum Topic {
+  ARRAY
+  LINKED_LIST
+  STACK
+  QUEUE
+  HASH_TABLE
+  TREE
+  BINARY_TREE
+  BINARY_SEARCH_TREE
+  HEAP
+  GRAPH
+  SORTING
+  SEARCHING
+  DYNAMIC_PROGRAMMING
+  RECURSION
+  BACKTRACKING
+  GREEDY
+  DIVIDE_AND_CONQUER
+  TRIE
+  MATRIX
+  STRING
+  TWO_POINTER
+  PREFIX_SUM
+  BINARY_SEARCH
+  SLIDING_WINDOW
+}
+
+enum Status {
+    ACCEPTED                // "Accepted"
+    WRONG_ANSWER            // "Wrong Answer"
+    TIME_LIMIT_EXCEEDED     // "Time Limit Exceeded"
+    COMPILATION_ERROR       // "Compilation Error"
+    RUNTIME_ERROR_SIGSEGV   // "Runtime Error (SIGSEGV)"
+    RUNTIME_ERROR_SIGXFSZ   // "Runtime Error (SIGXFSZ)"
+    RUNTIME_ERROR_SIGFPE    // "Runtime Error (SIGFPE)"
+    RUNTIME_ERROR_SIGABRT   // "Runtime Error (SIGABRT)"
+    RUNTIME_ERROR_NZEC      // "Runtime Error (NZEC)"
+    RUNTIME_ERROR_OTHER     // "Runtime Error (Other)"
+    INTERNAL_ERROR          // "Internal Error"
+    EXEC_FORMAT_ERROR       // "Exec Format Error"
+}
+
+
+enum Language {
+  JAVA
+  PYTHON
+  CPP
+  JAVASCRIPT
+}
