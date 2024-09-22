@@ -83,18 +83,14 @@ export async function GET(req){
                 include:{
                     solutions:true,
                     testcases:true,
-                    examples:{
-                        include:{
-                            testcase:true
-                        }
-                    },
+                    examples:true
                 }
             });
 
             if(problem)
             return NextResponse.json({message:"Problem fetched successfully",problem},{status:200}); 
             else{
-             return NextResponse.json({message:"Problem does not exist"},{status:404});  
+             return NextResponse.json({error:"Problem does not exist"},{status:404});  
             }  
         }
         else{
