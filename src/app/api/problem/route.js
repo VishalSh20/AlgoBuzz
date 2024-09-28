@@ -68,13 +68,18 @@ export async function PUT(req){
 
 export async function GET(req){
     console.log(req.nextUrl.searchParams);
+    const userId = req.nextUrl.searchParams.get('userId');
     const slug = req.nextUrl.searchParams.get('slug');
     const query = req.nextUrl.searchParams.get('query') || "";
+    const page = req.nextUrl.searchParams.get('page') || 1;
+    const skip = (page-1)*5;
+    const take=5;
     let topics = req.nextUrl.searchParams.getAll('topics');
     topics = topics.length>0 ? topics : Object.values(Topic);
     let difficulties = req.nextUrl.searchParams.getAll('difficulties');
     difficulties = difficulties.length>0 ? difficulties : ['EASY','MEDIUM','HARD'];
     console.log(difficulties,topics);
+
 
     try {
         if(slug){
@@ -87,8 +92,40 @@ export async function GET(req){
                 }
             });
 
-            if(problem)
+            if(problem){
+            const totalSubmissions = await prisma.submission.count({
+                where:{
+                    problemId:problem.id
+                }
+            });
+            const acceptedSubmissions = await prisma.submission.count({
+                where:{
+                    AND:[
+                        {problemId:problem.id},
+                       { status:"ACCEPTED"}
+                    ]
+                }
+            });
+
+            let solved = false;
+            if(userId){
+                solved = (await prisma.submission.count({
+                    where:{
+                        AND:[
+                            {problemId:problem.id},
+                           { status:"ACCEPTED"},
+                           {userId:userId}
+                        ]
+                    }
+                }))>0;
+            }
+
+            problem.totalSubmissions = totalSubmissions;
+            problem.acceptedSubmissions = acceptedSubmissions;
+            problem.solved = solved;
+
             return NextResponse.json({message:"Problem fetched successfully",problem},{status:200}); 
+            }
             else{
              return NextResponse.json({error:"Problem does not exist"},{status:404});  
             }  
@@ -120,11 +157,37 @@ export async function GET(req){
                     slug:true,
                     difficulty:true,
                     topics:true,
+                },
+                skip:skip,
+                take:take,
+                orderBy:{
+                    id:'asc'
                 }
                 
             });
+
+            const areProblemsAhead = ((await prisma.problem.count({
+                where:{
+                    AND:[
+                        {difficulty:{
+                            in:difficulties.map(d=>convertToDifficulty(d))
+                        }},
+                        {topics:{
+                            hasSome:topics
+                        }},
+                        {OR:[
+                            {title:{
+                                contains:query
+                            }},
+                            {Statement:{
+                                contains:query
+                            }},
+                        ]},
+                    ] 
+                }
+            })) - (skip+problems.length)) > 0;
     
-            return NextResponse.json({message:"Problems fetched successfully",problems:problems},{status:200});
+            return NextResponse.json({message:"Problems fetched successfully",problems:problems,areProblemsAhead:areProblemsAhead},{status:200});
         }
     } catch (error) {
         return NextResponse.json({error:`Error while fetching problems - \n ${error.message}`},{status:500});

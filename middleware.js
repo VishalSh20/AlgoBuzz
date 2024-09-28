@@ -1,16 +1,20 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-const isProtectedRoute = createRouteMatcher(['/dashboard','/p(.*)'])
-export default clerkMiddleware((auth,req)=>{
-    if(isProtectedRoute())
-        auth().protect();
-    
-}
-)
+// Match the protected route specifically for '/api/submissions'
+const isProtectedRoute = createRouteMatcher(['/api/submissions']);
+
+export default clerkMiddleware((auth, req) => {
+  const pathname = req.nextUrl.pathname; // Use nextUrl.pathname in middleware
+  if (isProtectedRoute(pathname)) {
+    auth().protect();
+  }
+});
 
 export const config = {
   matcher: [
-    // Skip Next.js internals, static files, and API routes, unless found in search params
-    '/((?!_next|api|trpc|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Match only the '/api/submissions' API route, skip all other API routes
+    '/api/submissions',
+    // Skip Next.js internals, static files
+    '/((?!_next|trpc|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
   ],
 };

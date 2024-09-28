@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Dropdown, Spinner, Button, TextInput } from "flowbite-react";
 import Link from "next/link";
-import { FaSearch } from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
 
 function Page() {
   const [problems, setProblems] = useState([]);
@@ -12,10 +12,16 @@ function Page() {
   const [selectedDifficulties, setSelectedDifficulties] = useState([]);
   const [query, setQuery] = useState("");
   const [searchQuery,setSearchQuery] = useState("");
-  const [error, setError] = useState(null);
+  const [page,setPage] = useState(1);
+  const [areProblemsAhead,setAreProblemsAhead] = useState(false);
+  const [errorCode,setErrorCode] = useState(0);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setErrorCode(0);
+    setErrorMessage(null);
+
     axios
       .get("/api/topics/")
       .then((response) => {
@@ -44,7 +50,8 @@ function Page() {
       .then((response) => {
         const data = response.data;
         if (data?.problems) {
-          setProblems((problems) => data.problems);
+          setProblems(() => data.problems);
+          setAreProblemsAhead(() => data.areProblemsAhead);
         } else {
           setError(data.error);
         }
@@ -220,6 +227,30 @@ function Page() {
               </div>
             ))}
           </div>
+
+          {/* Page Navigation */}
+          <div className="flex w-full justify-around">
+            <Button color="info"
+             outline
+            disabled={page==1}
+            onClick={()=>setPage(page=>page-1)}
+            >
+              <span className={`flex gap-1 items-center`}>
+              <FaArrowLeft/>Prev
+              </span>
+            </Button>
+            <Button 
+            color="info" 
+            outline
+            disabled={!areProblemsAhead}
+            onClick={()=>setPage(page=>page+1)}
+            >
+              <span className={`flex gap-1 items-center`}>
+              Next<FaArrowRight/>
+              </span>
+            </Button>
+          </div>
+
         </div>
       )}
     </div>

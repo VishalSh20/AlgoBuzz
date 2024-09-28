@@ -8,11 +8,11 @@ function ProblemDescription({problem}) {
     <div className='w-full bg-transparent text-black'>
             
         <div className="flex flex-col items-baseline gap-10 min-h-full p-2">
-            <p className="text-gray-700">{problem.Statement}</p>
+            <pre className='text-gray-600 font-mono text-wrap'>{problem.Statement}</pre>
 
             <div className="flex flex-col gap-4">
                 {problem.examples?.map((example,index)=>(
-                    <div className='flex flex-col gap-2 p-2'>
+                    <div className='flex flex-col gap-2 p-2' key={index}>
                         <h2>Example {index}</h2>
                         <span>Input: {example.inputText}</span>
                         <span>Output: {example.outputText}</span>
@@ -43,8 +43,8 @@ function ProblemDescription({problem}) {
               <Dropdown label={"Topics"} >
                 <Dropdown.Item className='flex flex-wrap gap-2 '>
                   {
-                    problem.topics?.map(topic => (
-                      <div className='p-1 rounded-lg bg-gray-200'>{topic}</div>
+                    problem.topics?.map((topic,index) => (
+                      <div className='p-1 rounded-lg bg-gray-200' key={index}>{topic}</div>
                     ))
                   }
                 </Dropdown.Item>

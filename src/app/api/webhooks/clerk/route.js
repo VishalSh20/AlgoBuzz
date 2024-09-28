@@ -1,10 +1,108 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
 import { WebhookEvent } from '@clerk/nextjs/server'
+import { prisma } from '@/db/db.config';
+import { NextResponse } from 'next/server';
 
 async function registerUser(data){
-    console.log(data);
-    return new Response('',{status:200});
+  try {
+    const {id,first_name,last_name,username,image_url,email_addresses,external_accounts} = data;
+    if(!id)
+      return new NextResponse.json({message:"Id is required"},{status:400});
+
+    if(email_addresses.length === 0)
+      return new NextResponse.json({message:"Email is required"},{status:400});
+
+    const email = email_addresses[0].email_address;
+    const linkedinAccount = external_accounts.find(account => account.provider === "linkedin");
+    const linkedin = linkedinAccount ? linkedinAccount.username : "";
+    const githubAccount = external_accounts.find(account => account.provider==="github");
+    const github = githubAccount ? githubAccount.username : "";
+
+    const user = await prisma.user.create({
+      data:{
+        id,
+        name:(first_name ? first_name : "") + (last_name ? last_name : ""),
+        username,
+        email,
+        imageurl:image_url||"",
+        github,
+        linkedin
+      }
+    });
+
+    return NextResponse.json({message:"user created successfully",user:user},{status:200});
+
+  } catch (error) {
+      console.log(error);
+      return  NextResponse.json({message:error.message||"Error in user creation"},{status:500});
+  }
+ 
+}
+
+
+async function updateUser(data) {
+  try {
+    const {id,first_name,last_name,username,image_url,email_addresses,external_accounts} = data;
+    if(!id)
+      return new NextResponse.json({message:"Id is required"},{status:400});
+
+    if(email_addresses.length === 0)
+      return new NextResponse.json({message:"Email is required"},{status:400});
+
+    const email = email_addresses[0].email_address;
+    const linkedinAccount = external_accounts.find(account => account.provider === "linkedin");
+    const linkedin = linkedinAccount ? linkedinAccount.username : "";
+    const githubAccount = external_accounts.find(account => account.provider==="github");
+    const github = githubAccount ? githubAccount.username : "";
+
+    const user = await prisma.user.update({
+      where:{id},
+      data:{
+        name:(first_name ? first_name : "") + (last_name ? last_name : ""),
+        username,
+        email,
+        imageurl:image_url||"",
+        github,
+        linkedin
+      }
+    });
+
+    return NextResponse.json({message:"user updated successfully",user:user},{status:200});
+
+  } catch (error) {
+      console.log(error);
+      return  NextResponse.json({message:error.message||"Error in user updation"},{status:500});
+  }
+
+}
+
+async function deleteUser(data) {
+  try {
+    const { id } = data;
+    
+    if (!id) {
+      return NextResponse.json({ message: "Id is required for deletion" }, { status: 400 });
+    }
+
+    const existingUser = await prisma.user.findUnique({
+      where: { id }
+    });
+
+    if (!existingUser) {
+      return NextResponse.json({ message: "User does not exist" }, { status: 400 });
+    }
+
+    await prisma.user.delete({
+      where: { id }
+    });
+
+    return NextResponse.json({ message: "User deleted successfully" }, { status: 200 });
+    
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ message: error.message || "Error occurred while deleting user" }, { status: 500 });
+  }
 }
 
 
@@ -47,7 +145,7 @@ export async function POST(req) {
     });
   } catch (err) {
     console.error('Error verifying webhook:', err)
-    return new Response('Error occured', {
+    return NextResponse({message:'Error occured'}, {
       status: 400,
     })
   }
@@ -62,5 +160,5 @@ export async function POST(req) {
   else if(eventType === "user.deleted")
     return deleteUser(payload.data);
 
-  return new Response('', { status: 500 })
+  return NextResponse({message:"Invalid webhook request"}, { status: 500 });
 }
