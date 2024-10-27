@@ -1,15 +1,17 @@
 "use client"
-import {useUser} from '@clerk/nextjs';
+import Hero from '@/components/Hero';
+import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { FaCode, FaDropbox } from 'react-icons/fa';
 
 export default function Home() {
-  const {isLoaded,isSignedIn,user} = useUser();
-  
+  const { isLoaded, isSignedIn, user } = useUser();
+
   return (
-    <div className="flex flex-col w-full min-h-screen items-center bg-gradient-to-br from-violet-600 via-fuchsia-300 to-amber-400 text-white ">
+    <main className='bg-gradient-to-br from-gray-900 via-green-900 to-emerald-900'>
+      <div class="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_100%,transparent_100%)]"></div>
       {/* Hero Section */}
-      <header className="flex flex-col w-[90vw] items-center justify-center text-center p-8 bg-indigo-700/30 min-h-[50vh] ">
+      {/* <header className="flex flex-col w-[90vw] items-center justify-center text-center p-8 bg-indigo-700/30 min-h-[50vh] ">
         <h1 className="text-6xl font-bold mb-4 text-indigo-700 drop-shadow-lg">
           GS CODESOLVER
         </h1>
@@ -33,7 +35,9 @@ export default function Home() {
         </Link>
       }
         </div>
-      </header>
+      </header> */}
+
+      <Hero />
 
       {/* Features Section */}
       <section className="flex flex-col items-center mt-12 w-[90%] max-w-6xl text-black" id='feature-section'>
@@ -62,6 +66,6 @@ export default function Home() {
           </Link>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

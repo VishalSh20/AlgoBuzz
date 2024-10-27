@@ -4,6 +4,8 @@ import Header from "@/components/Header";
 import { ClerkProvider } from "@clerk/nextjs";
 import Footer from "@/components/Footer";
 
+import { Poppins } from "next/font/google";
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -15,6 +17,8 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+const poppins = Poppins({ subsets: ["latin"], weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"] });
+
 export const metadata = {
   title: "Code Solver",
   description: "Code Solver - A simple coding problem solving platform",
@@ -24,7 +28,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${poppins.className} antialiased`}
       >
         <ClerkProvider>
         <Header/>
