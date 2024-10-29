@@ -1,28 +1,31 @@
 "use client";
 
 import { Navbar, Avatar, Button, Dropdown } from 'flowbite-react';
-import { FaHome, FaLaptopCode, FaCloudUploadAlt, FaList } from 'react-icons/fa';
 import Link from 'next/link';
 import { SignInButton, SignOutButton, useUser } from '@clerk/nextjs';
+import { Squash as Hamburger } from 'hamburger-react';
+import { useState } from 'react';
 
 export default function Header() {
   const { isLoaded, isSignedIn, user } = useUser();
 
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
-    <Navbar fluid={true} rounded={true} className=" h-16 relative z-50 bg-gray-800/90 backdrop-blur-md border-b border-green-500/20 shadow-lg px-4 xl:px-12 2xl:px-20">
-      <div className="flex items-center justify-between w-full">
+    <Navbar fluid={true} rounded={true} className=" h-20 max-lg:h-28 fixed w-full z-50 bg-gray-800/70 backdrop-blur-md border-b border-green-500/20 shadow-lg px-4 xl:px-12 2xl:px-20 flex items-center justify-center">
+      <div className=" w-[90vw] flex items-center justify-between">
         {/* Left Section: Brand */}
         <Navbar.Brand>
-          <span className="self-center text-2xl font-semibold whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-green-300 via-emerald-500 to-teal-500">
+          <span className="self-center text-2xl font-semibold whitespace-nowrap logo-gradient">
             GS-Code-Solver
           </span>
         </Navbar.Brand>
 
         {/* Center Section: Navigation Links */}
-        <div className=' flex gap-8 items-center'>
-          <div className=" flex gap-10 font-semibold">
+        <div className=' flex gap-8 max-md:gap-2 items-center'>
+          <div className=" flex gap-10 font-semibold max-md:hidden">
             <Link href="/" passHref>
-              <span className="flex items-center text-lg text-gray-300 hover:text-blue-200 transition-all duration-300 hover:scale-105">
+              <span className="flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main">
                 {/* <FaHome className="mr-2" /> */}
                 Home
               </span>
@@ -30,7 +33,7 @@ export default function Header() {
 
 
             <Link href="/cf-buddy" passHref>
-              <span className="flex items-center text-lg text-gray-300 hover:text-blue-200 transition-all duration-300 hover:scale-105">
+              <span className="flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main">
                 {/* <FaCloudUploadAlt className="mr-2" /> */}
                 CF-Buddy
               </span>
@@ -38,24 +41,25 @@ export default function Header() {
 
             {/* New Problems Section */}
             <Link href="/problems" passHref>
-              <span className="flex items-center text-lg text-gray-300 hover:text-blue-200 transition-all duration-300 hover:scale-105">
+              <span className="flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main">
                 {/* <FaList className="mr-2" /> */}
                 Problems
               </span>
             </Link>
 
             <Link href="/ide" passHref>
-              <span className="flex items-center text-lg text-gray-300 hover:text-blue-200 transition-all duration-300 hover:scale-105">
+              <span className="flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main">
                 {/* <FaLaptopCode className="mr-2" /> */}
                 IDE
               </span>
             </Link>
           </div>
 
+
           <div className="flex items-center">
             {(!isLoaded || !isSignedIn)
               ?
-              <SignInButton className=" bg-gradient-to-br from-green-400 to-emerald-900 px-4 py-2 rounded-lg font-semibold hover:scale-105 transition-all duration-300 ease-in-out" />
+              <SignInButton className=" button-gradient2" />
               :
               <Dropdown
                 color={"transparent"}
@@ -99,6 +103,46 @@ export default function Header() {
                 </Dropdown.Item>
               </Dropdown>
             }
+          </div>
+
+          {/* <p className=' text-white text-5xl md:hidden'>
+            |
+          </p> */}
+
+          <div className='md:hidden' onClick={() => setMenuOpen(!menuOpen)}>
+            <Hamburger toggled={menuOpen} toggle={setMenuOpen} color={"#FFFFFF"} size={24} />
+          </div>
+
+          <div className={`${menuOpen ? "flex" : "hidden"} absolute z-50 top-28 right-0 flex-col items-center justify-center gap-10 font-semibold h-fit w-fit px-24 py-16 rounded-3xl bg-gray-800 backdrop-blur-lg`}>
+            <Link href="/" passHref>
+              <span className="flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main">
+                {/* <FaHome className="mr-2" /> */}
+                Home
+              </span>
+            </Link>
+
+
+            <Link href="/cf-buddy" passHref>
+              <span className="flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main">
+                {/* <FaCloudUploadAlt className="mr-2" /> */}
+                CF-Buddy
+              </span>
+            </Link>
+
+            {/* New Problems Section */}
+            <Link href="/problems" passHref>
+              <span className="flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main">
+                {/* <FaList className="mr-2" /> */}
+                Problems
+              </span>
+            </Link>
+
+            <Link href="/ide" passHref>
+              <span className="flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main">
+                {/* <FaLaptopCode className="mr-2" /> */}
+                IDE
+              </span>
+            </Link>
           </div>
         </div>
       </div>

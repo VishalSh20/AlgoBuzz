@@ -2,26 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+::-webkit-scrollbar {
+    width: 8px;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+::-webkit-scrollbar-track {
+    background: #555;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+::-webkit-scrollbar-thumb {
+    background: rgb(5, 46, 22);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #242424;
+}
+
+.logo-gradient{
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-green-300 via-emerald-500 to-teal-500;
+}
+
+.button-gradient2 {
+    @apply bg-gradient-to-br from-green-400 to-emerald-900 px-4 py-2 rounded-lg font-semibold hover:scale-105 transition-all duration-300 ease-in-out text-white w-fit;
+}
+
+.button-gradient1 {
+    @apply bg-gradient-to-r from-teal-500 via-emerald-500 to-teal-500 text-center rounded-lg transition-all duration-500 ease-in-out text-white;
+    background-size: 200% auto;
+}
+
+.button-gradient1:hover {
+    background-position: right center;
+}
+
+@media screen and (min-width:1440px) {
+    html {
+        font-size: 130%;
+    }
+}
+
+@media screen and (max-width:1080px) {
+    html {
+        font-size: 90%;
+    }
+}
+
+@media screen and (max-width:640px) {
+    html {
+        font-size: 80%;
+    }
+}
+
+@media screen and (max-width:400px) {
+    html {
+        font-size: 70%;
+    }
 }
