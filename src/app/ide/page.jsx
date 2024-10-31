@@ -64,7 +64,7 @@ export default function Page() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-r via-purple-800 from-violet-400 to-cyan-400 text-white">
+    <div className="min-h-screen pt-24 pb-12 flex flex-col bg-gradient-to-br from-gray-800 via-green-900 to-emerald-900 text-white">
       {/* <header className="py-4 mt-2 mx-auto bg-gradient-to-r from-cyan-300  to-pink-300 w-fit p-1 rounded text-2xl text-black font-bold shadow-lg">
         GS-Code-Solver IDE
       </header> */}
@@ -72,9 +72,9 @@ export default function Page() {
       <main className="flex flex-1 flex-col md:flex-row w-full">
         {/* Left side: Monaco Editor */}
         <div className="w-full md:w-[50%] p-4">
-          <Card className="bg-gray-900 shadow-lg border border-purple-500">
+          <Card className="bg-gray-900 shadow-lg border border-green-400">
             <div className="flex justify-between w-full text-white">
-              <select className="p-2 border-2 border-purple-600 focus:border-pink-600 bg-gray-700 text-white rounded"
+              <select className="p-2 border border-green-400 bg-gray-700 text-white rounded"
                 value={language}
                 onChange={e => {
                   setLanguage(e.target.value);
@@ -86,12 +86,12 @@ export default function Page() {
                 <option value="java">Java</option>
               </select>
 
-              <Button gradientDuoTone="purpleToPink" outline disabled={executing} onClick={handleCodeExecution}>
+              <Button disabled={executing} onClick={handleCodeExecution}>
                 {executing ? <Spinner color="purple" /> : "Run"}
               </Button>
             </div>
             <Editor
-              height="90vh"
+              height="60vh"
               key={editorKey}
               value={code[language]}
               defaultLanguage={language}
@@ -107,14 +107,16 @@ export default function Page() {
               options={{
                 minimap: { enabled: false },
               }}
+              theme="vs-dark"
+              className="border border-gray-500 rounded-lg p-1"
             />
           </Card>
         </div>
 
         {/* Right side: Input and Output */}
-        <div className="w-[90%] md:w-[45%] p-4 space-y-4">
+        <div className="w-[90%] md:w-[45%] p-4 space-y-8">
           {/* Input Box */}
-          <Card className="bg-gray-900 shadow-lg border border-purple-500">
+          <Card className="bg-gray-800 shadow-lg border border-green-400">
             <div className="text-lg font-bold flex items-center mb-2">
               <FaTerminal className="mr-2" /> Input
             </div>
@@ -122,14 +124,14 @@ export default function Page() {
               value={input}
               disabled={executing}
               onChange={(e) => setInput(e.target.value)}
-              rows={6}
-              className="bg-gray-700 text-white border border-purple-600"
+              rows={5}
+              className=" resize-none bg-gray-700 text-white border-none focus:ring-0 placeholder:text-gray-300"
               placeholder="Enter input here..."
             />
           </Card>
 
           {/* Output Box */}
-          <Card className="bg-gray-900 shadow-lg border border-purple-500">
+          <Card className="bg-gray-800 shadow-lg border border-green-400">
             <div className="text-lg font-bold flex justify-between items-center mb-2">
               <div>
                 Output
@@ -143,7 +145,7 @@ export default function Page() {
                 </Dropdown.Header>
               </Dropdown>
             </div>
-            <div className="p-4 bg-gray-700 min-h-32 overflow-auto text-white">
+            <div className="p-3 bg-gray-700 min-h-24 overflow-auto text-gray-300 rounded-lg text-sm ">
               {output || 'Your output will appear here...'}
             </div>
           </Card>
