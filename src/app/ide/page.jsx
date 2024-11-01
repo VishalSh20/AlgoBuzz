@@ -3,7 +3,7 @@ import { Editor } from "@monaco-editor/react";
 import { Toaster, toast } from "react-hot-toast";
 import { useRef, useState } from 'react';
 import { FaTerminal } from 'react-icons/fa';
-import { Textarea, Card, Button, Spinner, Modal, Dropdown } from 'flowbite-react';
+import { Textarea, Card, Spinner } from 'flowbite-react';
 import { boilerplate } from "../constants";
 import axios from "axios";
 
@@ -64,7 +64,7 @@ export default function Page() {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-12 flex flex-col bg-gradient-to-br from-gray-800 via-green-900 to-emerald-900 text-white">
+    <div className="min-h-screen pt-24 pb-12 flex flex-col bg-gradient text-white">
       {/* <header className="py-4 mt-2 mx-auto bg-gradient-to-r from-cyan-300  to-pink-300 w-fit p-1 rounded text-2xl text-black font-bold shadow-lg">
         GS-Code-Solver IDE
       </header> */}
@@ -86,9 +86,9 @@ export default function Page() {
                 <option value="java">Java</option>
               </select>
 
-              <Button disabled={executing} onClick={handleCodeExecution}>
+              <button className="button-gradient2 py-2 px-4" disabled={executing} onClick={handleCodeExecution}>
                 {executing ? <Spinner color="purple" /> : "Run"}
-              </Button>
+              </button>
             </div>
             <Editor
               height="60vh"
@@ -114,7 +114,7 @@ export default function Page() {
         </div>
 
         {/* Right side: Input and Output */}
-        <div className="w-[90%] md:w-[45%] p-4 space-y-8">
+        <div className="w-[90%] md:w-[45%] p-4 space-y-6">
           {/* Input Box */}
           <Card className="bg-gray-800 shadow-lg border border-green-400">
             <div className="text-lg font-bold flex items-center mb-2">
@@ -137,15 +137,15 @@ export default function Page() {
                 Output
               </div>
 
-              <Dropdown label={<span>{status}</span>}>
-                <Dropdown.Header>
-                  <div className={`text-2xl ${status === "Accepted" ? "text-green-500 bg-green-300" : "text-red-600 bg-red-300"}`}>
-                    {status}
-                  </div>
-                </Dropdown.Header>
-              </Dropdown>
+              {/* <Dropdown label={<span>{status}</span>}> */}
+              {/* <Dropdown.Header> */}
+              {status && <div className={`button-gradient2 text-xs ${status === "Accepted" ? "text-white" : "text-red-600"}`}>
+                {status}
+              </div>}
+              {/* </Dropdown.Header> */}
+              {/* </Dropdown> */}
             </div>
-            <div className="p-3 bg-gray-700 min-h-24 overflow-auto text-gray-300 rounded-lg text-sm ">
+            <div className={`p-3 bg-gray-700 min-h-28 overflow-auto ${output ? "text-white" : "text-gray-300"} rounded-lg text-sm `}>
               {output || 'Your output will appear here...'}
             </div>
           </Card>
