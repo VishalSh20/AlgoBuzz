@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    reactStrictMode:false,
     env:{
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:"pk_test_Z3JhdGVmdWwtdHJvdXQtODguY2xlcmsuYWNjb3VudHMuZGV2JA",
         CLERK_SECRET_KEY:"sk_test_P7M3ALuRVXHilqqHIJOnZmu4s51yhsE8dpw3QlfhzC",
