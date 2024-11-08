@@ -5,10 +5,10 @@ import React from 'react'
 function ProblemDescription({problem}) {
     console.log(problem);
   return (
-    <div className='w-full bg-transparent text-black'>
+    <div className='w-full bg-transparent text-gray-200'>
             
         <div className="flex flex-col items-baseline gap-10 min-h-full p-2">
-            <pre className='text-gray-600 font-mono text-wrap'>{problem.Statement}</pre>
+            <pre className='text-gray-200 font-mono text-wrap'>{problem.Statement}</pre>
 
             <div className="flex flex-col gap-4">
                 {problem.examples?.map((example,index)=>(
@@ -31,7 +31,7 @@ function ProblemDescription({problem}) {
                 {problem.constraints?.map((constraint, index) => (
                   <p
                     key={index}
-                    className="bg-slate-300 dark:bg-purple-700 p-1 rounded w-fit"
+                    className="bg-gray-700 dark:bg-purple-700 p-1 px-2 rounded w-fit"
                   >
                     {constraint}
                   </p>

@@ -175,7 +175,7 @@ function ProblemSubmissions({userId, problem, setEditorLanguage, setCode }) {
           ))}
         </div>
       ) : (
-        <div className="w-full flex justify-center p-4">
+        <div className="w-full flex justify-center p-4 text-white">
           <span>No submissions found for the selected filters.</span>
         </div>
       )}
