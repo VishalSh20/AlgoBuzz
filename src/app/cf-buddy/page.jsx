@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 function Page() {
   return (
-    <div className=" pt-28 pb-12 flex flex-col gap-8 items-center justify-center min-h-[100svh] bg-gradient-to-br from-gray-800 via-green-900 to-emerald-900">
+    <div className=" pt-28 pb-12 flex flex-col gap-8 items-center justify-center min-h-[100svh] bg-gradient">
       <div className="absolute inset-0 h-full bg-[linear-gradient(to_right,#6666662e_1px,transparent_1px),linear-gradient(to_bottom,#6666662e_1px,transparent_1px)] bg-[size:14px_24px] mask-image:radial-gradient(ellipse_100%_100%_at_50%_0%,#ffffff_100%,transparent_100%)]"></div>
 
       <div className=' flex relative z-10 flex-col justify-center items-center gap-4'>

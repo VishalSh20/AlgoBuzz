@@ -3,7 +3,7 @@ import { CodeXml, Squirrel } from "lucide-react"
 
 const Features = () => {
     return (
-        <section className=' w-full h-fit pt-6 pb-24 flex items-center justify-center text-white relative'>
+        <section className=' w-full h-fit pt-6 pb-24 flex items-center justify-center text-white relative' id='feature-section'>
             <div className="absolute inset-0 h-full bg-[linear-gradient(to_right,#6666662e_1px,transparent_1px),linear-gradient(to_bottom,#6666662e_1px,transparent_1px)] bg-[size:14px_24px] mask-image:radial-gradient(ellipse_100%_100%_at_50%_0%,#ffffff_100%,transparent_100%)]">
             </div>
             <div className=" flex flex-col justify-center items-center gap-16 relative z-10">

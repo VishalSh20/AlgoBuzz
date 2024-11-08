@@ -1,31 +1,32 @@
 "use client";
 
-import { Navbar, Avatar, Button, Dropdown } from 'flowbite-react';
+import { Avatar, Dropdown } from 'flowbite-react';
 import Link from 'next/link';
 import { SignInButton, SignOutButton, useUser } from '@clerk/nextjs';
 import { Squash as Hamburger } from 'hamburger-react';
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function Header() {
   const { isLoaded, isSignedIn, user } = useUser();
+  const path = usePathname();
 
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <Navbar fluid={true} rounded={true} className=" h-20 max-lg:h-28 fixed w-full z-50 bg-gray-800/70 backdrop-blur-md border-b border-green-500/20 shadow-lg px-4 xl:px-12 2xl:px-20 flex items-center justify-center">
+    <nav className=" h-20 max-lg:h-28 fixed w-full z-50 bg-gray-800/70 backdrop-blur-md border-b border-green-500/20 shadow-lg px-4 xl:px-12 2xl:px-20 flex items-center justify-center">
       <div className=" w-[90vw] flex items-center justify-between">
         {/* Left Section: Brand */}
-        <Navbar.Brand>
-          <span className="self-center text-2xl font-semibold whitespace-nowrap logo-gradient">
-            GS-Code-Solver
-          </span>
-        </Navbar.Brand>
+        <span className="self-center text-2xl font-semibold whitespace-nowrap logo-gradient">
+          GS-Code-Solver
+        </span>
+
 
         {/* Center Section: Navigation Links */}
         <div className=' flex gap-8 max-md:gap-2 items-center'>
           <div className=" flex gap-10 font-semibold max-md:hidden">
             <Link href="/" passHref>
-              <span className="flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main">
+              <span className={`flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main ${path === '/' ? "text-text-main" : ""}`}>
                 {/* <FaHome className="mr-2" /> */}
                 Home
               </span>
@@ -33,7 +34,7 @@ export default function Header() {
 
 
             <Link href="/cf-buddy" passHref>
-              <span className="flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main">
+              <span className={`flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main ${path === '/cf-buddy' ? "text-text-main" : ""}`}>
                 {/* <FaCloudUploadAlt className="mr-2" /> */}
                 CF-Buddy
               </span>
@@ -41,14 +42,14 @@ export default function Header() {
 
             {/* New Problems Section */}
             <Link href="/problems" passHref>
-              <span className="flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main">
+              <span className={`flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main ${path === '/problems' ? "text-text-main" : ""}`}>
                 {/* <FaList className="mr-2" /> */}
                 Problems
               </span>
             </Link>
 
             <Link href="/ide" passHref>
-              <span className="flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main">
+              <span className={`flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main ${path === 'ide' ? "text-text-main" : ""}`}>
                 {/* <FaLaptopCode className="mr-2" /> */}
                 IDE
               </span>
@@ -146,6 +147,6 @@ export default function Header() {
           </div>
         </div>
       </div>
-    </Navbar>
+    </nav>
   );
 }
