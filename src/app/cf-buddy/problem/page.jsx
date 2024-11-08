@@ -20,6 +20,7 @@ function Page() {
     setFinding(true);
     const requestURL = `${process.env.NEXT_PUBLIC_CF_INTERFACE_URL}/problem/?contestId=${contestId}&problemId=${problemId}`;
     console.log(requestURL);
+
     axios
     .get(requestURL)
     .then((response)=>{
@@ -87,7 +88,7 @@ function Page() {
     <div className="grid grid-cols-6 w-full p-4 border-2 border-emerald-400 rounded-xl bg-gradient-to-br from-black to-gray-800 shadow-neon">
       {/* Problem ID */}
       <div className="col-span-1 p-2 text-emerald-300 font-mono text-lg font-bold">
-        {`${contestId}${problemId}`}
+        {`${problem.id}`}
       </div>
 
       {/* Problem Title */}

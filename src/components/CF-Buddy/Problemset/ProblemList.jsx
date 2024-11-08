@@ -35,7 +35,7 @@ function ProblemList({problems,problemsLoading}) {
                     
                     {/* Problem Name */}
                     <td className="flex flex-col border border-gray-200 p-2">
-                      <span className="text-green-500 text-xl text-clip">{problem.name}</span>
+                      <span className="text-green-500 text-xl text-clip">{problem.title}</span>
                       <span className='text-gray-600 text-clip text-sm'>{problem.topics.join(',')}</span>
                     </td>
                     

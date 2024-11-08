@@ -25,7 +25,10 @@ function Page() {
 
     useEffect(()=>{
         setProblemsLoading(true);
-        const requestURL = `${"http://localhost:4000/api/v1"}/problemset`;
+        let requestURL = `${"http://localhost:4000/api/v1"}/problemset?page=${page}&upperLimit=${upperLimit}&lowerLimit=${lowerLimit}`;
+        if(tags.length)
+            requestURL += `&tags=${tags.join(',')}`;
+
         axios
         .get(requestURL)
         .then((response)=>{
