@@ -25,7 +25,7 @@ function Page() {
 
     useEffect(()=>{
         setProblemsLoading(true);
-        let requestURL = `${"http://localhost:4000/api/v1"}/problemset?page=${page}&upperLimit=${upperLimit}&lowerLimit=${lowerLimit}`;
+        let requestURL = `${process.env.NEXT_PUBLIC_CF_INTERFACE_URL}/problemset?page=${page}&upperLimit=${upperLimit}&lowerLimit=${lowerLimit}`;
         if(tags.length)
             requestURL += `&tags=${tags.join(',')}`;
 
