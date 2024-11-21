@@ -1,27 +1,29 @@
 "use client"
+import Loading from '@/app/loading'
 import { Spinner } from 'flowbite-react'
 import React from 'react'
 
-function ProblemList({problems,problemsLoading}) {
+function ProblemList({ problems, problemsLoading }) {
   return (
-    <div className='flex items-center w-full h-svh gap-4 p-2 border-1 border-teal-700 rounded-lg'>
+    <div className='flex items-start justify-center w-full h-svh gap-4 p-2 border-1 border-teal-700 rounded-lg'>
       {
         problemsLoading
-        ?
-        <div className='flex flex-col h-full justify-center'>
-            <span className='text-2xl font-mono font-bold'>Loading the problems...</span>
-            <Spinner color="info" className='w-20 h-20'/>
-        </div>
-        :
-        <div className="w-full h-svh overflow-scroll p-2">
-        <table className='w-full h-full overflow-scroll border-2 border-gray-200 p-2 rounded-xl'>
-            <thead className='p-4 border border-green-900 rounded-xl bg-gradient-to-br from-green-700 to-teal-700'>
+          ?
+          // <div className='flex flex-col h-full justify-center'>
+          //     <span className='text-2xl font-mono font-bold'>Loading the problems...</span>
+          //     <Spinner color="info" className='w-20 h-20'/>
+          // </div>
+          <Loading />
+          :
+          <div className="w-full h-svh overflow-y-scroll p-2">
+            <table className='w-full h-full overflow-y-scroll border-2 border-gray-200 p-2 rounded-xl'>
+              <thead className='p-4 border border-green-900 rounded-xl bg-gradient-to-br from-green-700 to-teal-700'>
                 <tr>
-                <th className='border border-gray-200'>Id</th>
-                <th className='border border-gray-200'>Title</th>
-                <th className='border border-gray-200'>Rating</th>
-                <th className='border border-gray-200'>Submissions</th>
-                <th className='border border-gray-200'></th>
+                  <th className='border border-gray-200 p-3'>Id</th>
+                  <th className='border border-gray-200 p-3'>Title</th>
+                  <th className='border border-gray-200 p-3'>Rating</th>
+                  <th className='border border-gray-200 p-3'>Submissions</th>
+                  <th className='border border-gray-200 p-3'></th>
                 </tr>
             </thead>
             <tbody>
@@ -35,7 +37,7 @@ function ProblemList({problems,problemsLoading}) {
                     
                     {/* Problem Name */}
                     <td className="flex flex-col border border-gray-200 p-2">
-                      <span className="text-green-500 text-xl text-clip">{problem.name}</span>
+                      <span className="text-green-500 text-xl text-clip">{problem.title}</span>
                       <span className='text-gray-600 text-clip text-sm'>{problem.topics.join(',')}</span>
                     </td>
                     

@@ -37,7 +37,7 @@ function Page({params}) {
     },[]);
 
   return (
-    <div className=' flex flex-col gap-8 items-center min-h-[100svh] bg-gradient-to-br from-gray-800 via-green-900 to-emerald-900'>
+    <div className='flex flex-col gap-8 items-center min-h-[100svh] bg-gradient-to-br from-gray-800 via-green-900 to-emerald-900'>
       
     </div>
   )
