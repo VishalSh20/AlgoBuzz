@@ -1,6 +1,7 @@
 "use client"
 import axios from 'axios';
 import { Spinner } from 'flowbite-react';
+import { Loader } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
@@ -39,20 +40,20 @@ function Page() {
  }
 
   return (
-    <div className=' flex flex-col items-center min-h-[100svh] bg-gradient-to-br from-gray-800 via-green-900 to-emerald-900'>
-      <header className='w-full px-4 pt-20 pb-10'>
-        <span className="font-bold text-green-800 text-3xl">CF-Buddy Problem Interface</span>
-      </header>
+    <section className=' flex flex-col pt-20 gap-6 items-center justify-center min-h-[100svh] bg-gradient'>
+      <div className=''>
+        <span className="font-bold logo-gradient text-3xl">CF-Buddy Problem Interface</span>
+      </div>
 
-      <main className='w-full h-full flex flex-wrap justify-evenly gap-10 p-10'>
+      <div className='w-full h-full flex flex-wrap justify-evenly gap-10'>
 
         {/* form to find problem */}
-            <div className='flex flex-col items-center w-[90%] sm:w-[35%] p-4 gap-4 bg-gradient-to-br from-green-700 to-teal-500 border border-emerald-400 rounded-xl'>
+            <div className='flex flex-col items-center w-[90%] sm:w-[45%] px-4 py-8 gap-4 bg-gray-800/70 backdrop-blur-md text-white rounded-xl'>
                 <h2 className='self-center text-2xl '>Find Problem:</h2>
                 <div className="flex items-center gap-2 p-2">
                 <label>Contest Id -</label>
                 <input type='number' 
-                className='max-w-28 p-2'
+                className='max-w-28 p-2 bg-gray-900 rounded-lg'
                 min={1} 
                 max={4000} 
                 value={contestId}
@@ -62,18 +63,18 @@ function Page() {
                 <div className="flex items-center gap-2 p-2">
                 <label>Problem Id -</label>
                 <input 
-                className='max-w-20 p-2'
+                className='max-w-20 p-2 bg-gray-900 rounded-lg'
                 maxLength={2}
                 value={problemId}
                 onChange={(e)=>setProblemId(id => e.target.value.trim())}/>
                 </div>
 
                 <button
-                    className='self-center flex items-center gap-1 p-2 w-fit rounded-xl bg-gradient-to-r from-teal-400 to-cyan-700 hover:from-teal-200 hover:to-purple-400  hover:border-2 hover:border-purple-800'
+                    className='self-center flex items-center gap-1 p-2 w-fit rounded-xl button-gradient2'
                     disabled={finding}
                     onClick={findQuestionHandler}
                 >
-                    <span>{finding ? <Spinner/> : "Find"}</span>
+                    <span>{finding ? <Loader className=' text-white animate-spin'/> : "Find"}</span>
                     <MdSearch className={`${finding && "hidden"}`}/>
                 </button>
             </div>
@@ -85,7 +86,7 @@ function Page() {
   }`}
 >
   {problem ? (
-    <div className="grid grid-cols-6 w-full p-4 border-2 border-emerald-400 rounded-xl bg-gradient-to-br from-black to-gray-800 shadow-neon">
+    <div className="grid items-center grid-cols-6 w-full p-4 border border-emerald-400 rounded-xl bg-gradient-to-br from-gray-950 to-gray-800 shadow-neon">
       {/* Problem ID */}
       <div className="col-span-1 p-2 text-emerald-300 font-mono text-lg font-bold">
         {`${problem.id}`}
@@ -102,7 +103,7 @@ function Page() {
       {/* Solve Button */}
       <div className="col-span-1 p-2 flex justify-center items-center">
         <Link href={`/cf-buddy/problem/${contestId}-${problemId}`}>
-          <button className="bg-gradient-to-r from-purple-500 to-teal-500 text-white font-semibold hover:from-green-500 hover:to-purple-500 hover:scale-105 p-2 text-sm rounded-xl transform transition-all duration-300 shadow-lg shadow-purple-500/50">
+          <button className="button-gradient2 text-white font-semibold  p-2 text-sm rounded-xl transform transition-all duration-300 shadow-lg shadow-green-500/50">
             Solve
           </button>
         </Link>
@@ -117,8 +118,8 @@ function Page() {
 </div>
 
 
-      </main>
-    </div>
+      </div>
+    </section>
   )
 }
 

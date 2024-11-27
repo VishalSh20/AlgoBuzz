@@ -22,28 +22,20 @@ function Page() {
       <div className=' flex flex-col items-center justify-center gap-4 text-white relative z-10'>
         <h2 className=' text-lg'>
           Paste the Question Link and Dive into <span className="text-text-main font-semibold">Coding...</span>
-        </h2> 
+        </h2>
       </div>
 
-      <div className="flex mx-auto p-4 gap-4 items-center justify-center border-2 border-green-700 rounded-xl">
-        <div className="w-40 h-40 flex flex-col justify-center items-center bg-gradient-to-r from-green-700 via-purple-400 to-teal-700 hover:from-teal-400 hover:to-purple-500 rounded-xl border-2 border-green-400 p-4">
-        <Link href="/cf-buddy/problems" >
-          <span className='text-wrap font-mono text-2xl w-fit'>
-            Search Problems
-          </span>
+      <div className="flex relative z-20 mx-auto gap-6 items-center justify-center ">
+        <Link href="/cf-buddy/problems" className="button-gradient1 px-6 py-3 text-lg font-medium hover:px-9 hover:py-4">
+          Search Problems
         </Link>
-        </div>
 
-        <div className="w-40 h-40 flex flex-col justify-center items-center bg-gradient-to-r from-green-700 via-purple-400 to-teal-700 hover:from-teal-400 hover:to-purple-500 rounded-xl border-2 border-green-400 p-4">
-        <Link href="/cf-buddy/contests" >
-          <span className='text-wrap font-mono text-2xl w-fit'>
-            Search contests
-          </span>
+        <Link href="/cf-buddy/contests" className="button-gradient1 px-6 py-3 text-lg font-medium hover:px-9 hover:py-4">
+          Search contests
         </Link>
-        </div>
 
       </div>
-      
+
 
       {/* <div className="flex flex-col justify-center w-full h-72 shadow-lg shadow-blue-300">
         <div className="flex flex-col w-full items-center gap-4">
