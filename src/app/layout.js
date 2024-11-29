@@ -3,7 +3,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import { ClerkProvider } from "@clerk/nextjs";
 import Footer from "@/components/Footer";
-
+import {Analytics} from "@vercel/analytics/next"
 import { Poppins } from "next/font/google";
 
 const geistSans = localFont({
@@ -33,6 +33,7 @@ export default function RootLayout({ children }) {
         <ClerkProvider>
         <Header/>
         {children}
+        <Analytics/>
         <Footer/>
         </ClerkProvider>
       </body>
