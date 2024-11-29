@@ -8,9 +8,9 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row w-full justify-between">
           <div className="text-center md:text-left">
-            <h2 className="text-2xl font-semibold mb-2 logo-gradient">GSCodeSolver</h2>
+            <h2 className="text-2xl font-semibold mb-2 logo-gradient">AlgoBuzz</h2>
             <p className="text-base tracking-wider">
-              Made with <span className="text-red-500">❤️</span> by Vishal Sharma & <span><Link href="https://github.com/kumarpritam1468">Pritam Manohari</Link></span>
+              Made with <span className="text-red-500">❤️</span> by <span><Link href="https://github.com/VishalSh20">Vishal Sharma</Link></span> & <span><Link href="https://github.com/kumarpritam1468">Pritam Manohari</Link></span>
             </p>
           </div>
 
@@ -56,7 +56,7 @@ const Footer = () => {
 
         <div className="mt-8 border-t border-gray-700 pt-8 text-center">
           <p className="text-sm text-gray-500">
-            © {new Date().getFullYear()} GSCodeSolver. All rights reserved.
+            © {new Date().getFullYear()} AlgoBuzz. All rights reserved.
           </p>
         </div>
       </div>

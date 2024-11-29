@@ -18,7 +18,7 @@ export default function Header() {
       <div className=" w-[90vw] flex items-center justify-between">
         {/* Left Section: Brand */}
         <span className="self-center text-2xl font-semibold whitespace-nowrap logo-gradient">
-          GS-Code-Solver
+         AlgoBuzz
         </span>
 
 
