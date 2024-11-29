@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# **AlgoBuzz - The Ultimate Coding Platform**  
 
-## Getting Started
+Welcome to **AlgoBuzz**, a one-stop solution for coding enthusiasts! Designed to elevate your coding experience, AlgoBuzz offers advanced tools and features to help you solve 100+ DSA problems, streamline competitive programming contests with **CF-Buddy**, and use an integrated online IDE for seamless coding and debugging.  
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## **Features**  
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **100+ DSA Problems**: Tackle a wide range of curated problems designed to strengthen your data structures and algorithms skills.  
+- **CF-Buddy**: A dedicated **Codeforces Interface** that simplifies the process of participating in contests by providing real-time updates, efficient workflows, and performance insights.  
+- **Online IDE**: Write, test, and debug your code with our integrated, fast, and reliable online IDE.  
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## **Project Architecture**  
 
-## Learn More
+AlgoBuzz is a robust, scalable application built using modern tools and architecture. Here's how the project is structured:  
 
-To learn more about Next.js, take a look at the following resources:
+### **Frontend (Root Project)**  
+- **Framework**: [Next.js](https://nextjs.org/) for server-side rendering and a seamless user experience.  
+- **Authentication**: Powered by [Clerk](https://clerk.dev/) for secure, easy-to-manage user authentication.  
+- **Database**: [PostgreSQL](https://www.postgresql.org/) with [Prisma](https://www.prisma.io/) as the ORM for managing database operations.  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### **Supporting Services**  
+1. **Code-Execution Worker**: Handles secure and isolated code execution for the online IDE.  
+   - [https://github.com/VishalSh20/code-solver-worker](#)  
+2. **CF-Interface Worker**: Streamlines interactions with the Codeforces API to provide real-time contest and user data.  
+   - [https://github.com/VishalSh20/cf-interface](#)  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+These microservices are hosted on dedicated servers for optimal performance and reliability.  
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## **Tech Stack**  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+| Component        | Technology                  |  
+|------------------|-----------------------------|  
+| Frontend         | Next.js                     |  
+| Authentication   | Clerk                       |  
+| Database         | PostgreSQL with Prisma ORM  |  
+| Microservices    | Node.js Workers             |  
+
+---
+
+
+
+ 
+
