@@ -18,7 +18,8 @@ function generateSlug(title) {
       .replace(/^-+|-+$/g, ''); // Remove leading and trailing hyphens
 }
 
-export async function POST(req,res){
+export async function POST(req,_){
+    console.log("Here");
     const reqBody = await req.json();
     const {title,difficulty,Statement,constraints,topics} = reqBody;
     if([title,difficulty,Statement,constraints,topics].some(val=>(val===undefined)))
@@ -73,12 +74,12 @@ export async function GET(req){
     const query = req.nextUrl.searchParams.get('query') || "";
     const page = req.nextUrl.searchParams.get('page') || 1;
     const skip = (page-1)*5;
-    const take=5;
+    const take=8;
     let topics = req.nextUrl.searchParams.getAll('topics');
     topics = topics.length>0 ? topics : Object.values(Topic);
     let difficulties = req.nextUrl.searchParams.getAll('difficulties');
     difficulties = difficulties.length>0 ? difficulties : ['EASY','MEDIUM','HARD'];
-    console.log(difficulties,topics);
+    // console.log(difficulties,topics);
 
 
     try {

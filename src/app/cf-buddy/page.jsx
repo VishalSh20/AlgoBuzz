@@ -11,7 +11,7 @@ function Page() {
         <h1 className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-text-main to-emerald-600 text-center ">CODE FORCES BUDDY</h1>
 
         <p className=' text-white -mt-4 text-lg'>
-          By <span className='logo-gradient font-semibold ml-2'>Gs-Code-Solver</span>
+          By <span className='logo-gradient font-semibold ml-2'>AlgoBuzz</span>
         </p>
 
         <p className=" text-center text-xl font-medium tracking-wider text-gray-300 leading-6">

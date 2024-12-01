@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Dropdown, Button, TextInput } from "flowbite-react";
+import { Dropdown, Button} from "flowbite-react";
 import Link from "next/link";
 import { FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
 import Loading from "../loading";
@@ -43,7 +43,8 @@ function Page() {
     const topicQuery = selectedTopics.map((topic) => `topics=${encodeURIComponent(topic)}`).join("&");
     const difficultyQuery = selectedDifficulties.map((diff) => `difficulties=${encodeURIComponent(diff)}`).join("&");
     const searchQuery = query ? `query=${encodeURIComponent(query)}` : "";
-    let finalQuery = [topicQuery, difficultyQuery, searchQuery].filter((q) => q !== "").join("&");
+    const pageQuery = `page=${page||1}`; 
+    let finalQuery = [topicQuery, difficultyQuery, searchQuery,pageQuery].filter((q) => q !== "").join("&");
     finalQuery = finalQuery ? `?${finalQuery}` : "";
 
     axios
@@ -63,7 +64,7 @@ function Page() {
       .finally(() => {
         setLoading((loading) => false);
       });
-  }, [query, selectedTopics, selectedDifficulties]);
+  }, [query, selectedTopics, selectedDifficulties,page]);
 
   const handleToggleDifficulty = (diff) => {
     const diffIncluded = selectedDifficulties.includes(diff);
