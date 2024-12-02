@@ -95,7 +95,7 @@ export default function Header() {
                   </Link>
                 </Dropdown.Item>
                 <Dropdown.Item>
-                  <Link href={`/manage-account`} className="block w-full text-left">
+                  <Link href={`/profile/settings`} className="block w-full text-left">
                     Manage Account
                   </Link>
                 </Dropdown.Item>
