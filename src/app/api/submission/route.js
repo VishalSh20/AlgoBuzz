@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/db/db.config";
 import axios from "axios";
 import { Status } from "@prisma/client";
-// import {currentUser} from "@clerk/nextjs/server"
 
 export async function POST(request) {
     try {
@@ -45,11 +44,11 @@ export async function GET(request) {
     try {
         const userId = request.nextUrl.searchParams.get('userId');
         const problemId = request.nextUrl.searchParams.get('problemId');
-        const userOnly = request.nextUrl.searchParams.get('userId');
+        const userOnly = request.nextUrl.searchParams.get('userOnly');
         const status = request.nextUrl.searchParams.get('status');
         const language = request.nextUrl.searchParams.get('language');
-        const limit = request.nextUrl.searchParams.get('limit') || 10;
-        const page = request.nextUrl.searchParams.get('page') || 1;
+        const limit = Number(request.nextUrl.searchParams.get('limit') || 10);
+        const page = Math.max(Number(request.nextUrl.searchParams.get('page')),1);
         const skip = (page-1)*limit;
 
         console.log("page",page);
@@ -59,6 +58,9 @@ export async function GET(request) {
                     ...(userOnly && userId &&{ userId:userId}),                            
                     ...(status && { status: Status[status] }),       
                     ...(language && { language:language }),
+                },
+                include:{
+                    problem:true
                 },
                 orderBy:{
                     createdAt:'desc'
@@ -79,6 +81,7 @@ export async function GET(request) {
             return NextResponse.json({message:"Submissions fetched successfully",body:{submissions:submissions,areSubmissionsAhead:areSubmissionsAhead}},{status:200});
     } 
     catch (error) {
+        console.log(error);
         return NextResponse.json({error:error.message || "Failed to fetch submissions"},{status:500});
     }
 

@@ -85,7 +85,7 @@ function Page({ params }) {
 
 
   const handleCodeRun = () => {
-    const workerURL = "http://localhost:4000";
+    const workerURL = process.env.EXECUTION_WORKER_URL;
     setRunning(true);
     axios.post(
       workerURL,
@@ -128,8 +128,6 @@ function Page({ params }) {
         setTab("test-output");
       })
   }
-
-
 
   const handleCodeSubmission = () => {
     if (!isSignedIn) {

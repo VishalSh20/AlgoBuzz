@@ -13,6 +13,9 @@ export async function GET(req,_) {
             }
         });
 
+        if(!user)
+          return NextResponse.json({error:"User does not exist!!"},{status:404});
+
         const submissions = await prisma.submission.findMany({
             where: {
               userId: user.id
@@ -29,7 +32,7 @@ export async function GET(req,_) {
                   slug: true
                 }
               }
-            }
+            },
           });
           
           let problems = [];
