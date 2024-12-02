@@ -24,7 +24,7 @@ export default function Page() {
     setExecuting(executing => true);
     const loadToast = toast.loading("Running...be patient");
     axios.post(
-      "https://code-solver-worker-production.up.railway.app",
+      process.env.EXECUTION_WORKER_URL,
       {
         code: code[language],
         language,
@@ -55,7 +55,7 @@ export default function Page() {
       )
       .catch(
         (errorResponse) => {
-          toast.error("Oops..error occurred");
+          toast.error("Oops..error occurred",{id:loadToast});
         }
       )
       .finally(

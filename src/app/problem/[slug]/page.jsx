@@ -140,7 +140,7 @@ function Page({ params }) {
       return;
     }
 
-    const workerURL = "http://localhost:4000";
+    const workerURL = process.env.EXECUTION_WORKER_URL;
     setSubmitting(true);
 
     // Submit the code for execution
