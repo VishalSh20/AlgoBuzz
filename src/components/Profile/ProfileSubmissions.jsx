@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { FaArrowLeft, FaArrowRight, FaEye } from 'react-icons/fa';
 import { Modal, Button, Spinner } from 'flowbite-react';
-import axios from 'axios';
 import { MdWarning } from 'react-icons/md';
 
 function ProfileSubmissions({allSubmissions}) {
-  const [submissions, setSubmissions] = useState([]);
+  const submissions = allSubmissions.reverse();
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -20,27 +19,7 @@ function ProfileSubmissions({allSubmissions}) {
   const closeModal = () => {
     setSelectedSubmission(null);
   };
-  
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-    let requestURL = `/api/submission?page=${page}&limit=${limit}`;
-    axios
-      .get(requestURL)
-      .then((response) => {
-        const data = response.data;
-        const body = data.body;
-        console.log(body);
-        setSubmissions(body.submissions);
-      })
-      .catch((error) => {
-        const errorMessage = error.response?.data?.message || error.message || "Unknown Error in fetching submissions";
-        setError(errorMessage);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [page, limit]);
+
 
   // Status color mapping
   const getStatusColor = (status) => {
@@ -79,7 +58,9 @@ function ProfileSubmissions({allSubmissions}) {
 
           {/* Table Body */}
           <div className="bg-[#121212] rounded-lg">
-            {submissions.map((sub, index) => (
+            {submissions
+            .filter((sub,index)=>index>=((page-1)*limit) && index<(page*limit))
+            .map((sub, index) => (
               <div
                 key={index}
                 className="grid grid-cols-10 gap-4 p-2 items-center border-b border-[#333] hover:bg-[#1e1e1e] transition-colors"
@@ -147,7 +128,7 @@ function ProfileSubmissions({allSubmissions}) {
               <div className='flex justify-between'>
                 <p><strong>Problem:</strong> {selectedSubmission.problemId || 'N/A'}</p>
                 <p className={`${getStatusColor(selectedSubmission.status)}`}>
-                  <strong>Status:</strong> {selectedSubmission.status.toLocaleDateString()}
+                  <strong>Status:</strong> {selectedSubmission.status}
                 </p>
               </div>
               <p><strong>Submitted At:</strong> {new Date(selectedSubmission.createdAt).toLocaleDateString()}</p>

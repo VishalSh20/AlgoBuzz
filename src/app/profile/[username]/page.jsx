@@ -17,7 +17,6 @@ function Page({ params }) {
    const [isCurrentUser, setIsCurrentUser] = useState(false);
    const [allSubmissions, setAllSubmissions] = useState([]);
    const [problemsSolved, setProblemsSolved] = useState([]);
-   const uniqueProblems = new Set();
    const [totalProblemsCount, setTotalProblemsCount] = useState(0);
    const [easyProblemsCount, setEasyProblemsCount] = useState(0);
    const [mediumProblemsCount, setMediumProblemsCount] = useState(0);
@@ -32,29 +31,19 @@ function Page({ params }) {
     axios
     .get(`/api/profile/?username=${username}`)
     .then((response) => {
-        const data = response.data;
-        if (data?.error) {
-          setError(data.error);
-        } else {
+            const data = response.data;
             const profile = data.profile;
             setUserDetails(profile.user);
             setAllSubmissions(profile.submissions);
-            profile.problems.forEach(prob => uniqueProblems.add(prob));
-            for(let val of uniqueProblems.keys)
-              console.log(val);
-            let problems = [];
-            for(let prob of uniqueProblems){
-              problems.push(prob);
-            }
-            setProblemsSolved(problems);
+            setProblemsSolved(profile.problems);
             setTotalProblemsCount(profile.problems.length);
-            setEasyProblemsCount(problems.filter((prob) => prob.difficulty === "EASY").length);
-         setMediumProblemsCount(problems.filter((prob) => prob.difficulty === "MEDIUM").length);
-         setHardProblemsCount(problems.filter((prob) => prob.difficulty === "HARD").length);
-        }
+            setEasyProblemsCount(profile.problems.filter((prob) => prob.difficulty === "EASY").length);
+            setMediumProblemsCount(profile.problems.filter((prob) => prob.difficulty === "MEDIUM").length);
+            setHardProblemsCount(profile.problems.filter((prob) => prob.difficulty === "HARD").length);
        })
        .catch((error) => {
-         const errorMessage = error.response?.data?.error || "An error occurred";
+         const errorMessage = error.response?.data?.error || error.message || "An error occurred";
+         console.log(error);
          setError(errorMessage);
          setErrorCode(error.response?.status || 500);
         })
