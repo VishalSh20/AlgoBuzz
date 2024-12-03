@@ -59,7 +59,7 @@ function Page() {
                 </div>
 
                 {/* link to single problem page */}
-                <Link href="/cf-buddy/problem">
+                <Link href="/cf-buddy/contest">
                     <div className="py-2 px-5 flex gap-2 items-center h-fit font-medium button-gradient1 rounded-xl cursor-pointer  hover:scale-105">
                         <span className='text-base'>Find exact contest by Id</span>
                         <ArrowRight size={36} strokeWidth={1} />
