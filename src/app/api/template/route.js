@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/db/db.config";
+import { Language } from "@prisma/client";
 
 export async function POST(req,_){
     try {

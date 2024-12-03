@@ -85,7 +85,7 @@ function Page({ params }) {
 
 
   const handleCodeRun = () => {
-    const workerURL = process.env.EXECUTION_WORKER_URL;
+    const workerURL = `${process.env.EXECUTION_WORKER_URL}`;
     setRunning(true);
     axios.post(
       workerURL,

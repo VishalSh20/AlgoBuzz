@@ -50,3 +50,21 @@ export const codeforcesProblemTags = [
     "two pointers"
   ];
   
+
+ export const codeforcesContestTypes = [
+    "div1",        // Division 1
+    "div2",        // Division 2
+    "div3",        // Division 3
+    "div4",        // Division 4
+    "div1div2",    // Combined Div 1 and Div 2
+    "educational", // Educational Rounds
+    "ton",         // TON contests
+    "global",      // Global Rounds
+    "kotlin",      // Kotlin Heroes
+    "vkcup",       // VK Cup
+    "long",        // Long contests
+    "april",       // April Fools' contests
+    "team",        // Team contests
+    "icpc"         // ICPC-style contests
+  ];
+  
