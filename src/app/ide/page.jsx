@@ -23,22 +23,22 @@ export default function Page() {
   const handleCodeExecution = (e) => {
     setExecuting(executing => true);
     const loadToast = toast.loading("Running...be patient");
+    console.log(process.env.NEXT_PUBLIC_EXECUTION_WORKER_URL);
     axios.post(
-      process.env.EXECUTION_WORKER_URL,
+      process.env.NEXT_PUBLIC_EXECUTION_WORKER_URL,
       {
         code: code[language],
         language,
         testcases: [{ input: input }],
       }
     )
-      .then(
-        (response) => {
+      .then((response) => {
           const data = response.data;
-          if (data) {
             const overallStatus = data.overallStatus;
             const executionResults = data.executionResults;
             const executionOutput = executionResults[0].stdout;
             const executionError = executionResults[0].error;
+
             if (overallStatus) {
               setStatus(overallStatus);
               if (executionOutput) {
@@ -50,12 +50,11 @@ export default function Page() {
                 setOutput(executionError);
               }
             }
-          }
         }
       )
-      .catch(
-        (errorResponse) => {
-          toast.error("Oops..error occurred",{id:loadToast});
+      .catch((error) => {
+          const errorMessage = error.response?.data?.error || error.message || error.status || "Unknown Error";
+          toast.error(`Oops..error occurred : ${errorMessage}`,{id:loadToast});
         }
       )
       .finally(
@@ -139,7 +138,7 @@ export default function Page() {
 
               {/* <Dropdown label={<span>{status}</span>}> */}
               {/* <Dropdown.Header> */}
-              {status && <div className={`button-gradient2 text-xs ${status === "Accepted" ? "text-white" : "text-red-600"}`}>
+              {status && <div className={`button-gradient2 cursor-default text-xs ${status === "Accepted" ? "text-white" : "text-red-600"}`}>
                 {status}
               </div>}
               {/* </Dropdown.Header> */}

@@ -79,17 +79,16 @@ function Page() {
 >
   {contest ? (
     <div className="grid items-center grid-cols-6 w-full p-4 border border-emerald-400 rounded-xl bg-gradient-to-br from-gray-950 to-gray-800 shadow-neon">
-      {/* Problem ID */}
+      {/* Contest ID */}
       <div className="col-span-1 p-2 text-emerald-300 font-mono text-lg font-bold">
         {`${contest.id}`}
       </div>
 
-      {/* Problem Title */}
+      {/* Contest Title */}
       <div className="col-span-4 p-2 flex flex-col gap-1 text-emerald-200">
         <span className="text-xl font-semibold hover:text-emerald-400 transition duration-150">
           {contest.title}
         </span>
-        {/* <span>{problem.topics}</span> */}
       </div>
 
       {/* Solve Button */}

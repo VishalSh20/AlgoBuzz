@@ -85,7 +85,7 @@ function Page({ params }) {
 
 
   const handleCodeRun = () => {
-    const workerURL = `${process.env.EXECUTION_WORKER_URL}`;
+    const workerURL = `${process.env.NEXT_PUBLIC_EXECUTION_WORKER_URL}`;
     setRunning(true);
     axios.post(
       workerURL,
@@ -140,7 +140,7 @@ function Page({ params }) {
       return;
     }
 
-    const workerURL = process.env.EXECUTION_WORKER_URL;
+    const workerURL = process.env.NEXT_PUBLIC_EXECUTION_WORKER_URL;
     setSubmitting(true);
 
     // Submit the code for execution
