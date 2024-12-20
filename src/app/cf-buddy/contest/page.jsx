@@ -19,7 +19,7 @@ function Page() {
     setProblems(null);
     setError(null);
     setFinding(true);
-    const requestURL = `${process.env.NEXT_PUBLIC_CF_INTERFACE_URL}/contest/?contestId=${contestId}`;
+    const requestURL = `${process.env.NEXT_PUBLIC_CF_INTERFACE_URL}/contest.list`;
     console.log(requestURL);
 
     axios
@@ -27,8 +27,19 @@ function Page() {
     .then((response)=>{
         console.log("ResponseData",response.data);
         const responseData = response.data;
-        setContest(responseData.contest);
-        setProblems(responseData.contest?.problems);
+        if(responseData.status=="OK"){
+          const allContests = responseData.result;
+          let expectedContest = allContests.filter((contest)=>contest.id==contestId);
+          if(expectedContest.length){
+            expectedContest = expectedContest[0];
+            setContest(expectedContest);
+          }
+          else
+            setError("Contest does not exist");
+        }
+        else{
+          setError("Contest can't be searched at the moment, try again later!")
+        }
     })
     .catch((error)=>{
         const errorMessage = error.response?.data?.error || error.response?.status || error.message;
@@ -78,7 +89,7 @@ function Page() {
   }`}
 >
   {contest ? (
-    <div className="grid items-center grid-cols-6 w-full p-4 border border-emerald-400 rounded-xl bg-gradient-to-br from-gray-950 to-gray-800 shadow-neon">
+    <div className="grid items-center grid-cols-8 w-full p-4 border border-emerald-400 rounded-xl bg-gradient-to-br from-gray-950 to-gray-800 shadow-neon">
       {/* Contest ID */}
       <div className="col-span-1 p-2 text-emerald-300 font-mono text-lg font-bold">
         {`${contest.id}`}
@@ -87,9 +98,31 @@ function Page() {
       {/* Contest Title */}
       <div className="col-span-4 p-2 flex flex-col gap-1 text-emerald-200">
         <span className="text-xl font-semibold hover:text-emerald-400 transition duration-150">
-          {contest.title}
+          {contest.name}
         </span>
       </div>
+
+      {/* Contest type */}
+      <div className="col-span-1 p-2 text-emerald-300 font-mono text-lg font-bold">
+        {`${contest.type}`}
+      </div>
+
+     {/* Contest Phase */}
+      <div 
+        className="col-span-1 p-2 text-emerald-300 font-mono text-lg font-bold flex items-center"
+        title={contest.phase}
+      >
+        <span 
+          className={`inline-block w-4 h-4 rounded-full ${
+            contest.phase === "BEFORE" ? "bg-yellow-400" :
+            contest.phase === "CODING" ? "bg-green-400" :
+            contest.phase === "PENDING_SYSTEM_TEST" ? "bg-orange-400" :
+            contest.phase === "SYSTEM_TEST" ? "bg-blue-400" :
+            "bg-red-400"
+          }`} 
+        />
+      </div>
+
 
       {/* Solve Button */}
       <div className="col-span-1 p-2 flex justify-center items-center">

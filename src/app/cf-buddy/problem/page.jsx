@@ -1,8 +1,6 @@
 "use client"
 import axios from 'axios';
-import { Spinner } from 'flowbite-react';
 import { Loader } from 'lucide-react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { MdErrorOutline, MdSearch } from 'react-icons/md'
@@ -10,7 +8,7 @@ import { MdErrorOutline, MdSearch } from 'react-icons/md'
 function Page() {
     const [finding,setFinding] = useState(false);
     const [contestId,setContestId] = useState(2024);
-    const [problemId,setProblemId] = useState("A");
+    const [problemIndex,setProblemIndex] = useState("A");
     const [problem,setProblem] = useState(null);
     const [error,setError] = useState(null);
     const router = useRouter();
@@ -19,15 +17,24 @@ function Page() {
     setProblem(null);
     setError(null);
     setFinding(true);
-    const requestURL = `${process.env.NEXT_PUBLIC_CF_INTERFACE_URL}/problem/?contestId=${contestId}&problemId=${problemId}`;
-    console.log(requestURL);
+    const requestURL = `${process.env.NEXT_PUBLIC_CF_INTERFACE_URL}/problemset.problems`;
 
     axios
     .get(requestURL)
     .then((response)=>{
-        console.log("ResponseData",response.data);
         const responseData = response.data;
-        setProblem(responseData.problem);
+        if(responseData.status == "OK"){
+          const allProblems = responseData.result?.problems;
+          let expectedProblem = allProblems.filter((prob)=>{
+            return prob.contestId==contestId && prob.index==problemIndex;
+          });
+          if(expectedProblem.length){
+            expectedProblem = expectedProblem[0];
+            setProblem(expectedProblem);
+          }
+          else
+            setError("Problem does not exist"); 
+        }
     })
     .catch((error)=>{
         const errorMessage = error.response?.data?.error || error.response?.status || error.message;
@@ -40,9 +47,55 @@ function Page() {
  }
 
   return (
-    <section className=' flex flex-col pt-20 gap-6 items-center justify-center min-h-[100svh] bg-gradient'>
+    <section className=' flex flex-col pt-20 gap-4 items-center justify-center min-h-[100svh] bg-gradient'>
       <div className=''>
         <span className="font-bold logo-gradient text-3xl">CF-Buddy Problem Interface</span>
+      </div>
+
+      {/* question jo mila */}
+      <div
+      className={`items-center justify-center w-[90%] sm:w-fit p-4 ${
+        (problem || error) && !finding ? "flex" : "hidden"
+      }`}
+      >
+      {problem ? (
+        <div className="grid grid-cols-7 gap-4 p-4 mb-2 rounded-lg border border-[#00ff00]/30 hover:border-[#00ff00] hover:shadow-[0_0_5px_#00ff00] transition-all duration-300 bg-zinc-900/50">
+        <span className="text-gray-900 font-mono">
+          {problem.contestId}
+        </span>
+
+        <span className="text-gray-900 font-mono">
+          {problem.index}
+        </span>
+
+        <div className="col-span-2">
+          <div className="text-gray-900 font-bold mb-1">{problem.name}</div>
+          <div className='text-gray-900/60 text-sm'>{problem.tags.join(', ')}</div>
+        </div>
+
+        <span className="text-gray-900 font-mono">
+          {problem.rating || problem.points}
+        </span>
+
+        <span className="text-gray-900 font-mono">
+          {problem.solvedCount}
+        </span>
+
+        <button 
+        className="px-4 py-2 rounded bg-[#00ff00]/20 text-gray-900 border border-[#00ff00] hover:bg-[#00ff00]/30 hover:shadow-[0_0_10px_#00ff00] transition-all duration-300 h-fit"
+        onClick={()=>{
+          router.push(`/cf-buddy/problem/${problem.contestId}-${problem.index}`)
+        }}
+        >
+          Solve
+        </button>
+      </div>
+      ) : (
+        <div className="flex w-full justify-between items-center p-4 bg-gradient-to-br from-red-600 to-red-800 text-red-200 rounded-lg shadow-red-500/50">
+          <MdErrorOutline className="text-3xl neon-glow-red" />
+          <span className="font-bold">{error}</span>
+        </div>
+      )}
       </div>
 
       <div className='w-full h-full flex flex-wrap justify-evenly gap-10'>
@@ -65,8 +118,8 @@ function Page() {
                 <input 
                 className='max-w-20 p-2 bg-gray-900 rounded-lg'
                 maxLength={2}
-                value={problemId}
-                onChange={(e)=>setProblemId(id => e.target.value.trim())}/>
+                value={problemIndex}
+                onChange={(e)=>setProblemIndex(id => e.target.value.trim())}/>
                 </div>
 
                 <button
@@ -79,43 +132,6 @@ function Page() {
                 </button>
             </div>
 
-        {/* question jo mila */}
-        <div
-  className={`items-center justify-center w-[90%] sm:w-fit p-4 ${
-    (problem || error) && !finding ? "flex" : "hidden"
-  }`}
->
-  {problem ? (
-    <div className="grid items-center grid-cols-6 w-full p-4 border border-emerald-400 rounded-xl bg-gradient-to-br from-gray-950 to-gray-800 shadow-neon">
-      {/* Problem ID */}
-      <div className="col-span-1 p-2 text-emerald-300 font-mono text-lg font-bold">
-        {`${problem.id}`}
-      </div>
-
-      {/* Problem Title */}
-      <div className="col-span-4 p-2 text-clip flex flex-col gap-1 text-emerald-200">
-        <span className="text-xl font-semibold hover:text-emerald-400 transition duration-150">
-          {problem.title}
-        </span>
-        {/* <span>{problem.topics}</span> */}
-      </div>
-
-      {/* Solve Button */}
-      <div className="col-span-1 p-2 flex justify-center items-center">
-        <Link href={`/cf-buddy/problem/${contestId}-${problemId}`}>
-          <button className="button-gradient2 text-white font-semibold  p-2 text-sm rounded-xl transform transition-all duration-300 shadow-lg shadow-green-500/50">
-            Solve
-          </button>
-        </Link>
-      </div>
-    </div>
-  ) : (
-    <div className="flex w-full justify-between items-center p-4 bg-gradient-to-br from-red-600 to-red-800 text-red-200 rounded-lg shadow-red-500/50">
-      <MdErrorOutline className="text-3xl neon-glow-red" />
-      <span className="font-bold">{error}</span>
-    </div>
-  )}
-</div>
 
 
       </div>
