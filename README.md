@@ -24,8 +24,7 @@ AlgoBuzz is a robust, scalable application built using modern tools and architec
 ### **Supporting Services**  
 1. **Code-Execution Worker**: Handles secure and isolated code execution for the online IDE.  
    - [https://github.com/VishalSh20/code-solver-worker](#)  
-2. **CF-Interface Worker**: Streamlines interactions with the Codeforces API to provide real-time contest and user data.  
-   - [https://github.com/VishalSh20/cf-interface](#)  
+ 
 
 These microservices are hosted on dedicated servers for optimal performance and reliability.  
 
