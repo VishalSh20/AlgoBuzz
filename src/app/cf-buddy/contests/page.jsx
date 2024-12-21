@@ -21,21 +21,27 @@ function Page() {
     const [pastContests, setPastContests] = useState([]);
     const [upcomingCurrentContests,setUpcomingCurrentContests] = useState([]);
     const [error, setError] = useState(null);
-    const [page, setPage] = useState(1);
 
     const handleFindProblem = () => { }
 
     useEffect(() => {
         setContestsLoading(true);
-        let requestURL = `${process.env.NEXT_PUBLIC_CF_INTERFACE_URL}/contests?page=${page}`;
+        let requestURL = `${process.env.NEXT_PUBLIC_CF_INTERFACE_URL}/contest.list`;
 
         axios
             .get(requestURL)
             .then((response) => {
                 const responseData = response.data;
-                console.log("Response is-", responseData);
-                setPastContests(responseData.pastContests);
-                setUpcomingCurrentContests(responseData.upcoming_currentContests);
+                if(responseData.status === "OK"){
+                    const allContests = responseData.result;
+                    const pastContests = allContests.filter(contest => contest.phase === "FINISHED");
+                    const upcomingCurrentContests = allContests.filter(contest => contest.phase === "BEFORE" || contest.phase === "CODING");
+                    setPastContests(pastContests);
+                    setUpcomingCurrentContests(upcomingCurrentContests);
+                }
+                else{
+                    setError("Unable to get details at this moment, please try later");
+                }
             })
             .catch((error) => {
                 const errorMessage = error.response?.data?.error || error.response?.status || error.message;
@@ -58,7 +64,7 @@ function Page() {
                     <span>Find and solve any CODEFORCES contests!!</span>
                 </div>
 
-                {/* link to single problem page */}
+                {/* link to single contest page */}
                 <Link href="/cf-buddy/contest">
                     <div className="py-2 px-5 flex gap-2 items-center h-fit font-medium button-gradient1 rounded-xl cursor-pointer  hover:scale-105">
                         <span className='text-base'>Find exact contest by Id</span>
@@ -77,33 +83,6 @@ function Page() {
                         ?
                         <div className="flex flex-col items gap-2 p-2">
                             <ContestList upcomingCurrentContests={upcomingCurrentContests} pastContests={pastContests} contestsLoading={contestsLoading} />
-
-                            <div className="flex text-xl justify-between px-4 py-2 mt-4">
-                                <div className='flex gap-2'>
-                                    <span>Page: </span>
-                                    <button
-                                        className=' button-gradient2 p-2'
-                                        disabled={page == 1}
-                                        onClick={() => setPage(page => page - 1)}
-                                    >
-                                        <IoMdArrowBack />
-                                    </button>
-                                    <input
-                                        type='number'
-                                        min={1}
-                                        value={page}
-                                        onChange={(e) => setPage(e.target.value)}
-                                        className='w-10 text-center p-2 bg-gray-900'
-                                    />
-                                    <button
-                                        className=' button-gradient2 p-2'
-                                        onClick={() => setPage(page => page + 1)}
-                                    >
-                                        <IoMdArrowForward />
-                                    </button>
-                                </div>
-                            </div>
-
                         </div>
                         :
                         <div></div>
@@ -111,9 +90,9 @@ function Page() {
 
                 {/* filter section */}
 
-                <div className={`w-full md:w-[30vw] gap-4 p-4 items-center  ${contestsLoading ? "hidden" : "flex flex-col"}`}>
+                {/* <div className={`w-full md:w-[30vw] gap-4 p-4 items-center  ${contestsLoading ? "hidden" : "flex flex-col"}`}> */}
 
-                    {/* contest type filter */}
+                    {/* contest type filter
                     <div className="flex flex-col w-full items-center p-2">
                         <div className='flex justify-around items-center w-full'>
                             <span className='font-bold'>Contest Types:</span>
@@ -172,8 +151,8 @@ function Page() {
                     </button>
                 </div>
 
-
-            </div>
+*/}
+            </div> 
 
 
 

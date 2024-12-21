@@ -10,16 +10,14 @@ function Page() {
     const [finding,setFinding] = useState(false);
     const [contestId,setContestId] = useState(2024);
     const [contest,setContest] = useState(null);
-    const [problems,setProblems] = useState([]);
     const [error,setError] = useState(null);
     const router = useRouter();
  
  const findContestHandler = ()=>{
     setContest(null);
-    setProblems(null);
     setError(null);
     setFinding(true);
-    const requestURL = `${process.env.NEXT_PUBLIC_CF_INTERFACE_URL}/contest.list`;
+    const requestURL = `${process.env.NEXT_PUBLIC_CF_INTERFACE_URL}/contest.standings?contestId=${contestId}&from=1&count=1`;
     console.log(requestURL);
 
     axios
@@ -28,15 +26,8 @@ function Page() {
         console.log("ResponseData",response.data);
         const responseData = response.data;
         if(responseData.status=="OK"){
-          const allContests = responseData.result;
-          let expectedContest = allContests.filter((contest)=>contest.id==contestId);
-          if(expectedContest.length){
-            expectedContest = expectedContest[0];
-            setContest(expectedContest);
+            setContest(responseData.result?.contest);
           }
-          else
-            setError("Contest does not exist");
-        }
         else{
           setError("Contest can't be searched at the moment, try again later!")
         }
@@ -114,13 +105,15 @@ function Page() {
       >
         <span 
           className={`inline-block w-4 h-4 rounded-full ${
-            contest.phase === "BEFORE" ? "bg-yellow-400" :
-            contest.phase === "CODING" ? "bg-green-400" :
-            contest.phase === "PENDING_SYSTEM_TEST" ? "bg-orange-400" :
-            contest.phase === "SYSTEM_TEST" ? "bg-blue-400" :
-            "bg-red-400"
+            contest.phase === "BEFORE" ? "text-yellow-400" :
+            contest.phase === "CODING" ? "text-green-400" :
+            contest.phase === "PENDING_SYSTEM_TEST" ? "text-orange-400" :
+            contest.phase === "SYSTEM_TEST" ? "text-blue-400" :
+            "text-red-400"
           }`} 
-        />
+        >
+          {contest.phase}
+        </span>
       </div>
 
 

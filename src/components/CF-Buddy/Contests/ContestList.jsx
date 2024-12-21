@@ -1,138 +1,94 @@
 "use client";
 import Loading from "@/app/loading";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import {useRouter} from "next/navigation";
+const getRelativeTime = (contest) => {
+  const now = new Date();
+  const startTime = new Date(contest.startTimeSeconds * 1000);
+  const diffTime = startTime - now;
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); 
+  const diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+  return `${diffDays} days, ${diffHours} hours, ${diffMinutes} minutes`;
+}
 
 function ContestList({ upcomingCurrentContests, pastContests, contestsLoading }) {
-  useEffect(() => {
-    console.log(upcomingCurrentContests, pastContests);
-  }, [contestsLoading]);
+  const [tab,setTab] = useState("upcoming");
+  const router = useRouter();
+
+
 
   return (
-    <div className="flex flex-col w-full items-start justify-center h-svh gap-4 p-4 border-2 border-teal-700 rounded-lg">
+    <div className="flex flex-col w-full items-start justify-center h-svh gap-4 p-4 m-4 ">
       {contestsLoading ? (
         <Loading />
       ) : (
-        <div className="w-full h-svh overflow-y-auto p-2">
-          {/* Upcoming and Current Contests Table */}
-          <div className="mb-6">
-            <h2 className="text-2xl font-semibold text-green-700 mb-4">
-              Upcoming & Current Contests
-            </h2>
-            {upcomingCurrentContests?.length > 0 ? (
-              <UpcomingCurrentTable contests={upcomingCurrentContests} />
-            ) : (
-              <p className="text-gray-600">No upcoming or current contests available.</p>
-            )}
+        <div className="w-full p-2">
+          <div className="flex p-2 gap-2 m-4 bg-gradient-to-r shadow-lg shadow-green-500 from-teal-200/50 via-purple-200 to-green-200/50 rounded-lg">
+            <button className={`${tab === "upcoming" ? "bg-green-500/50 shadow-lg shadow-emerald-400" : "bg-violet-500/50"} p-2 rounded-lg text-2xl font-semibold text-violet-900 mb-4`} onClick={() => setTab("upcoming")}>Upcoming and Current</button>
+            <button className={`${tab === "past" ? "bg-green-500/50 shadow-lg shadow-emerald-400" : "bg-violet-500/50"} p-2 rounded-lg text-2xl font-semibold text-violet-900 mb-4`} onClick={() => setTab("past")}>Past</button>
           </div>
 
-          {/* Past Contests Table */}
-          <div>
-            <h2 className="text-2xl font-semibold text-green-700 mb-4">
-              Past Contests
-            </h2>
-            {pastContests?.length > 0 ? (
-              <PastContestsTable contests={pastContests} />
-            ) : (
-              <p className="text-gray-600">No past contests available.</p>
-            )}
-          </div>
+          {tab === "upcoming" && (
+            <div className="mb-6">
+              {upcomingCurrentContests?.length > 0 ? (
+                <TableElement contests={upcomingCurrentContests} showRelativeTime={true} />
+              ) : (
+                <p className="text-gray-600">No upcoming or current contests available.</p>
+              )}
+            </div>
+          )}
+
+          {tab === "past" && (
+            <div>
+              {pastContests?.length > 0 ? (
+                <TableElement contests={pastContests} showRelativeTime={false} />
+              ) : (
+                <p className="text-gray-600">No past contests available.</p>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 }
 
-function UpcomingCurrentTable({ contests }) {
+function TableElement({ contests, showRelativeTime }) {
+  const router = useRouter();
   return (
-    <table className="w-full border-2 border-gray-200 rounded-lg">
-      <thead className="bg-gradient-to-br from-green-700 to-teal-700 text-white">
-        <tr>
-          <th className="border border-gray-200 p-3">Id</th>
-          <th className="border border-gray-200 p-3">Name</th>
-          <th className="border border-gray-200 p-3">Writers</th>
-          <th className="border border-gray-200 p-3">Start Time</th>
-          <th className="border border-gray-200 p-3">Duration</th>
-          <th className="border border-gray-200 p-3">Accepted Count</th>
-        </tr>
-      </thead>
-      <tbody>
-        {contests.map((contest, index) => (
-          <tr
-            key={index}
-            className="hover:bg-gray-500 text-center text-gray-900"
-          >
-            <td className="border border-gray-200 p-3 text-cyan-600 font-semibold">
-              {contest.id || "N/A"}
-            </td>
-            <td className="border border-gray-200 p-3">
-              <span className="text-green-500 font-bold">{contest.name}</span>
-            </td>
-            <td className="border border-gray-200 p-3">
-              {contest.writers?.join(", ") || "N/A"}
-            </td>
-            <td className="border border-gray-200 p-3">
-              {contest.startTime || "N/A"}
-            </td>
-            <td className="border border-gray-200 p-3">
-              {contest.duration || "N/A"}
-            </td>
-            <td className="border border-gray-200 p-3">
-              {contest.acceptedCount || "N/A"}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-}
+    <div className='w-full h-svh overflow-y-scroll rounded-xl border-2 border-[#00ff00] shadow-[0_0_10px_#00ff00] p-4'>
+      {/* Header */}
+      <div className='grid grid-cols-7 gap-4 p-4 rounded-xl bg-zinc-900 text-sm mb-4 border border-[#00ff00] shadow-[0_0_5px_#00ff00]'>
+        <span className='text-[#00ff00] font-bold'>Id</span>
+        <span className='text-[#00ff00] font-bold col-span-2'>Name</span>
+        <span className='text-[#00ff00] font-bold'>Start Time</span>
+        <span className='text-[#00ff00] font-bold'>Duration</span>
+        <span className='text-[#00ff00] font-bold'>Type</span>
+        <span className='text-[#00ff00] font-bold'>{showRelativeTime ? 'Before Start' : 'Actions'}</span>
+      </div>
 
-function PastContestsTable({ contests }) {
-  return (
-    <table className="w-full border-2 border-gray-200 rounded-lg">
-      <thead className="bg-gradient-to-br from-green-700 to-teal-700 text-white">
-        <tr>
-          <th className="border border-gray-200 p-3">Id</th>
-          <th className="border border-gray-200 p-3">Name</th>
-          <th className="border border-gray-200 p-3">Writers</th>
-          <th className="border border-gray-200 p-3">Start Time</th>
-          <th className="border border-gray-200 p-3">Duration</th>
-          <th className="border border-gray-200 p-3">Accepted Count</th>
-          <th className="border border-gray-200 p-3">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {contests.map((contest, index) => (
-          <tr
-            key={index}
-            className="hover:bg-gray-500 text-center text-gray-900"
-          >
-            <td className="border border-gray-200 p-3 text-cyan-600 font-semibold">
-              {contest.id || "N/A"}
-            </td>
-            <td className="border border-gray-200 p-3">
-              <span className="text-green-500 font-bold">{contest.name}</span>
-            </td>
-            <td className="border border-gray-200 p-3">
-              {contest.writers?.join(", ") || "N/A"}
-            </td>
-            <td className="border border-gray-200 p-3">
-              {contest.startTime || "N/A"}
-            </td>
-            <td className="border border-gray-200 p-3">
-              {contest.duration || "N/A"}
-            </td>
-            <td className="border border-gray-200 p-3">
-              {contest.acceptedCount || "N/A"}
-            </td>
-            <td className="border border-gray-200 p-3">
-              <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                Solve
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+      {/* Contest Rows */}
+      {contests.map((contest, index) => (
+        <div key={index} className="grid grid-cols-7 gap-4 p-4 mb-2 rounded-lg border border-[#00ff00]/30 hover:border-[#00ff00] hover:shadow-[0_0_5px_#00ff00] transition-all duration-300 bg-zinc-900/50">
+          <span className="text-gray-900 font-mono">{contest.id}</span>
+          <span className="text-gray-900 font-bold col-span-2">{contest.name}</span>
+          <span className="text-gray-900 font-mono">{new Date(contest.startTimeSeconds * 1000).toLocaleString()}</span>
+          <span className="text-gray-900 font-mono">{Math.floor(contest.durationSeconds / 60)} minutes</span>
+          <span className="text-gray-900 font-mono">{contest.type}</span>
+          {showRelativeTime ? (
+            <span className="text-gray-900 font-mono">{getRelativeTime(contest)}</span>
+          ) : (
+            <button 
+              className="px-4 py-2 h-fit rounded bg-[#00ff00]/20 text-gray-900 border border-[#00ff00] hover:bg-[#00ff00]/30 hover:shadow-[0_0_10px_#00ff00] transition-all duration-300"
+              onClick={() => router.push(`/cf-buddy/contest/${contest.id}`)}
+            >
+              Solve
+            </button>
+          )}
+        </div>
+      ))}
+    </div>
   );
 }
 

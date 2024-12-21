@@ -17,24 +17,17 @@ function Page() {
     setProblem(null);
     setError(null);
     setFinding(true);
-    const requestURL = `${process.env.NEXT_PUBLIC_CF_INTERFACE_URL}/problemset.problems`;
+    const requestURL = `${process.env.NEXT_PUBLIC_CF_INTERFACE_URL}/contest.standings?contestId=${contestId}&from=1&count=1`;
 
     axios
     .get(requestURL)
     .then((response)=>{
         const responseData = response.data;
         if(responseData.status == "OK"){
-          const allProblems = responseData.result?.problems;
-          let expectedProblem = allProblems.filter((prob)=>{
-            return prob.contestId==contestId && prob.index==problemIndex;
-          });
-          if(expectedProblem.length){
-            expectedProblem = expectedProblem[0];
-            setProblem(expectedProblem);
-          }
-          else
-            setError("Problem does not exist"); 
+            setProblem((responseData.result?.problems).filter(prob => prob.index===problemIndex)?.[0]);
         }
+        else
+            setError("Problem does not exist"); 
     })
     .catch((error)=>{
         const errorMessage = error.response?.data?.error || error.response?.status || error.message;
@@ -59,7 +52,7 @@ function Page() {
       }`}
       >
       {problem ? (
-        <div className="grid grid-cols-7 gap-4 p-4 mb-2 rounded-lg border border-[#00ff00]/30 hover:border-[#00ff00] hover:shadow-[0_0_5px_#00ff00] transition-all duration-300 bg-zinc-900/50">
+        <div className="grid grid-cols-8 gap-4 p-4 mb-2 rounded-lg border border-[#00ff00]/30 hover:border-[#00ff00] hover:shadow-[0_0_5px_#00ff00] transition-all duration-300 bg-zinc-900/50">
         <span className="text-gray-900 font-mono">
           {problem.contestId}
         </span>
@@ -68,7 +61,7 @@ function Page() {
           {problem.index}
         </span>
 
-        <div className="col-span-2">
+        <div className="col-span-3">
           <div className="text-gray-900 font-bold mb-1">{problem.name}</div>
           <div className='text-gray-900/60 text-sm'>{problem.tags.join(', ')}</div>
         </div>
@@ -114,7 +107,7 @@ function Page() {
                 </div>
 
                 <div className="flex items-center gap-2 p-2">
-                <label>Problem Id -</label>
+                <label>Problem Index -</label>
                 <input 
                 className='max-w-20 p-2 bg-gray-900 rounded-lg'
                 maxLength={2}
