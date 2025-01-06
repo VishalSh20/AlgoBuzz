@@ -20,8 +20,8 @@ const geistMono = localFont({
 const poppins = Poppins({ subsets: ["latin"], weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"] });
 
 export const metadata = {
-  title: "Code Solver",
-  description: "Code Solver - A simple coding problem solving platform",
+  title: "AlgoBuzz",
+  description: "AlgoBuzz - Your own coding platform to test your DSA mettle!",
 };
 
 export default function RootLayout({ children }) {
