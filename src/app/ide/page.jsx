@@ -11,7 +11,7 @@ import getExecutionResults from "@/utils/execution.utils";
 export default function Page() {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
-  const [language, setLanguage] = useState('javascript');
+  const [language, setLanguage] = useState('cpp');
   const [code, setCode] = useState(boilerplate);
   const [executing, setExecuting] = useState(false);
   const [status, setStatus] = useState("");
@@ -77,7 +77,6 @@ export default function Page() {
                   setLanguage(e.target.value);
                   setEditorKey(key => key + 1);
                 }}>
-                <option value="javascript">JavaScript</option>
                 <option value="cpp">C++</option>
                 <option value="python">Python</option>
                 <option value="java">Java</option>
