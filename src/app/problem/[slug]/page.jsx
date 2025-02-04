@@ -16,6 +16,7 @@ import { Button, Spinner } from 'flowbite-react';
 import { MdCancel } from 'react-icons/md';
 import { FaCheck } from 'react-icons/fa';
 import Loading from '@/app/loading';
+import getExecutionResults from '@/utils/execution.utils';
 
 function Page({ params }) {
   const { slug } = params;
@@ -80,21 +81,13 @@ function Page({ params }) {
       .finally(() => {
         setLoading(false);
       });
-  }, [slug]);
+  }, [slug,user?.id]);
 
 
 
   const handleCodeRun = () => {
-    const workerURL = `${process.env.NEXT_PUBLIC_EXECUTION_WORKER_URL}`;
     setRunning(true);
-    axios.post(
-      workerURL,
-      {
-        code: code[language],
-        language: language,
-        testcases: exampleTestCases
-      }
-    )
+      getExecutionResults(code[language], language, exampleTestCases)
       .then((response) => {
         const data = response.data;
         const { overallStatus, overallMemory, overallTime, executionResults } = data;
@@ -106,8 +99,9 @@ function Page({ params }) {
         if (overallStatus !== "Accepted") {
           toast.error(overallStatus);
           for (let i = 0; i < executionResults.length; i++) {
-            if (executionResults[i].error) {
-              setTestExecutionError(executionResults[i].error);
+            const testError = executionResults[i].error || executionResults[i].stderr || executionResults[i].compilation_output;
+            if (testError) {
+              setTestExecutionError(testError);
               break;
             }
           }
@@ -140,16 +134,10 @@ function Page({ params }) {
       return;
     }
 
-    const workerURL = process.env.NEXT_PUBLIC_EXECUTION_WORKER_URL;
     setSubmitting(true);
 
     // Submit the code for execution
-    axios
-      .post(workerURL, {
-        code: code[language],
-        language,
-        testcases: problem.testcases,
-      })
+    getExecutionResults(code[language], language, problem.testcases)
       .then((response) => {
         const { overallStatus, overallMemory, overallTime, executionResults } = response.data;
 
@@ -178,9 +166,9 @@ function Page({ params }) {
         toast.error(errorMessage);
       })
       .finally(() => {
-        if (executionStatus !== "Accepted") {
+        if (executionStatus !== "ACCEPTED") {
           toast.error(executionStatus);
-          const errorResult = executionResults?.find((result) => result.error);
+          const errorResult = executionResults?.find((result) => result.error || result.stderr || result.compilation_output);
           if (errorResult) {
             setExecutionError(errorResult.error);
           }
@@ -188,7 +176,6 @@ function Page({ params }) {
           if (currentSubmission) {
             toast.success("Accepted!!");
           }
-
         }
         setIsTabVisible({ ...isTabVisible, ['result']: true })
         setTab('result');

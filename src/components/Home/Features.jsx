@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { CodeXml, Squirrel } from "lucide-react"
+import { CodeXml, BookCheck } from "lucide-react"
 
 const Features = () => {
     return (
@@ -18,7 +18,7 @@ const Features = () => {
                             IDE
                         </h2>
                         <p className=' text-gray-200'>
-                            A powerful Integrated Development Environment to code, debug, and run your projects seamlessly.
+                            A powerful IDE integrated with a robust code execution engine, helping you write, debug, and test your code efficiently.
                         </p>
                         <Link href="/ide" className=' button-gradient2 mt-2 hover:scale-100'>
                             Try Now
@@ -26,14 +26,14 @@ const Features = () => {
                     </div>
                     <div className=' flex flex-1 flex-col gap-5 px-6 py-8 bg-gray-800/80 rounded-2xl border border-transparent hover:border-text-main hover:-translate-y-1.5 cursor-pointer transition-all duration-300 ease-in-out'>
                         <h2 className=' text-text-main text-2xl font-medium flex gap-3 items-center'>
-                            <Squirrel size={30} />
-                            CF-BUDDY
+                            <BookCheck size={30} />
+                            DSA Problems
                         </h2>
                         <p className=' text-gray-200'>
-                            Upload and solve coding problems with ease, enhancing your productivity and efficiency in tackling challenges.
+                            Solve 100+ carefully curated Data Structures and Algorithms problems to enhance your coding skills and interview preparation.
                         </p>
-                        <Link href="/cf-buddy" className=' button-gradient2 mt-2 hover:scale-100'>
-                            Try Now
+                        <Link href="/problems" className=' button-gradient2 mt-2 hover:scale-100'>
+                            Explore Problems
                         </Link>
                     </div>
                 </div>

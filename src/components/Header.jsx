@@ -4,11 +4,14 @@ import { Avatar, Dropdown } from 'flowbite-react';
 import Link from 'next/link';
 import { SignInButton, SignOutButton, useUser } from '@clerk/nextjs';
 import { Squash as Hamburger } from 'hamburger-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 export default function Header() {
   const { isLoaded, isSignedIn, user } = useUser();
+  useEffect(() => {
+    console.log(user);
+  },[user]);
   const path = usePathname();
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -32,13 +35,24 @@ export default function Header() {
               </span>
             </Link>
 
-
+{
+  false &&
             <Link href="/cf-buddy" passHref>
               <span className={`flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main ${path === '/cf-buddy' ? "text-text-main" : ""}`}>
                 {/* <FaCloudUploadAlt className="mr-2" /> */}
                 CF-Buddy
               </span>
             </Link>
+}
+             
+             {/* Leaderboard Section */}
+             <Link href="/leaderboard" passHref>
+             <span className={`flex items-center text-lg text-gray-300 transition-all duration-300 hover:scale-105 hover:text-text-main ${path === '/leaderboard' ? "text-text-main" : ""}`}>
+             {/* <FaTrophy className="mr-2" /> */}
+             Leaderboard
+             </span>
+             </Link>
+
 
             {/* New Problems Section */}
             <Link href="/problems" passHref>

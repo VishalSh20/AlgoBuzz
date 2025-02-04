@@ -6,6 +6,7 @@ import { FaTerminal } from 'react-icons/fa';
 import { Textarea, Card, Spinner } from 'flowbite-react';
 import { boilerplate } from "../constants";
 import axios from "axios";
+import getExecutionResults from "@/utils/execution.utils";
 
 export default function Page() {
   const [input, setInput] = useState('');
@@ -20,28 +21,25 @@ export default function Page() {
   const [editorKey, setEditorKey] = useState(0);
   const editorRef = useRef();
 
-  const handleCodeExecution = (e) => {
+  const handleCodeExecution = async (e) => {
     setExecuting(executing => true);
     const loadToast = toast.loading("Running...be patient");
-    console.log(process.env.NEXT_PUBLIC_EXECUTION_WORKER_URL);
-    axios.post(
-      process.env.NEXT_PUBLIC_EXECUTION_WORKER_URL,
-      {
-        code: code[language],
+    
+    getExecutionResults(
+        code[language],
         language,
-        testcases: [{ input: input }],
-      }
+        [{ input: input }],
     )
-      .then((response) => {
-          const data = response.data;
+      .then((data) => {
+          console.log(data);
             const overallStatus = data.overallStatus;
             const executionResults = data.executionResults;
             const executionOutput = executionResults[0].stdout;
-            const executionError = executionResults[0].error;
+            const executionError = (overallStatus === "RUNTIME_ERROR") ? executionResults[0].stderr : (overallStatus === "COMPILATION_ERROR") ? executionResults[0].compilation_output : executionResults[0].error;
 
             if (overallStatus) {
               setStatus(overallStatus);
-              if (executionOutput) {
+              if (!executionError && overallStatus==="ACCEPTED") {
                 toast.success("Execution Completed", { id: loadToast });
                 setOutput(executionOutput);
               }

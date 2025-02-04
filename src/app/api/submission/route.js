@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/db/db.config";
-import axios from "axios";
 import { Status } from "@prisma/client";
 
 export async function POST(request) {
@@ -12,11 +11,8 @@ export async function POST(request) {
         console.log(userId,problemId,code,language,status);
         if([userId,problemId,code,language,status].some(val=>!val))
             return NextResponse.json({error:"All Details are Required"},{status:400});
-
-        // const user = await currentUser();
-        // if(!user || userId!==user.id)
-        //     return NextResponse.json({error:"User not Authorised"},{status:401});
-
+ 
+       
         const submissionData = {
             userId:userId,
             problemId,
@@ -26,11 +22,23 @@ export async function POST(request) {
             memory,
             time_taken
         };
-                const submissionInstance = await prisma.submission.create({
-                    data:submissionData
-                });
-                
-                return NextResponse.json({message:"Problem Submitted Successfully",submissionInstance},{status:200});
+
+        const submissionInstance = await prisma.submission.create({
+            data:submissionData
+        });
+
+        await prisma.user.update({
+            where:{
+                id:userId
+            },
+            data:{
+                problemsSolved: {
+                    increment: 1
+                }
+            }
+        })
+        
+        return NextResponse.json({message:"Problem Submitted Successfully",submissionInstance},{status:200});
 
     } catch (error) {
         console.log(error);

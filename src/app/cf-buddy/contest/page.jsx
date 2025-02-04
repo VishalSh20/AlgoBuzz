@@ -1,7 +1,6 @@
 "use client"
 import axios from 'axios';
 import { Loader } from 'lucide-react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { MdErrorOutline, MdSearch } from 'react-icons/md'
