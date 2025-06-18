@@ -13,7 +13,7 @@ function ProblemResult({ testcases, submissionInstance, executionResults, execut
  useEffect(()=>{
   if(!submitting){
     // console.log(testsChecked,executionResults[testsChecked]);
-    if(testsChecked<totalTestCases && executionResults[testsChecked]?.status?.description==="Accepted"){
+    if(testsChecked<totalTestCases && executionResults?.[testsChecked]?.status==="ACCEPTED"){
       setChecking(true);
       setTestsChecked(count=>count+1);
     }
@@ -21,7 +21,7 @@ function ProblemResult({ testcases, submissionInstance, executionResults, execut
       setChecking(false);
     }
   }
- },[submitting,testsChecked,executionResults]);
+ },[submitting,testsChecked,executionResults,totalTestCases]);
   
   
   return (
@@ -51,7 +51,7 @@ function ProblemResult({ testcases, submissionInstance, executionResults, execut
                   !checking && <MdCancel className='text-red-500 shadow-lg' />
                 )}
               </div>
-              <div className={`py-2 px-4 rounded-lg font-bold text-white ${executionStatus === "Accepted" ? "bg-green-500" : "bg-red-500"}`}>
+              <div className={`py-2 px-4 rounded-lg font-bold text-white ${executionStatus === "ACCEPTED" ? "bg-green-500" : "bg-red-500"}`}>
                 {executionStatus}
               </div>
             </div>
@@ -61,11 +61,11 @@ function ProblemResult({ testcases, submissionInstance, executionResults, execut
                 <div className="flex justify-between bg-gray-200 p-4 rounded-lg">
                   <div className="flex flex-col items-center">
                     <MdTimer className='text-2xl' />
-                    <span className="font-bold text-sm">{executionTime ? `${executionTime} s` : '-'}</span>
+                    <span className="font-bold text-sm">{executionTime ? `${executionTime} ms` : '-'}</span>
                   </div>
                   <div className="flex flex-col items-center">
                     <MdMemory className='text-2xl' />
-                    <span className="font-bold text-sm">{executionMemory ? `${(executionMemory/1000).toFixed(3)} mb` : '-'}</span>
+                    <span className="font-bold text-sm">{executionMemory ? `${(executionMemory).toFixed(3)} mb` : '-'}</span>
                   </div>
                 </div>
 

@@ -9,20 +9,20 @@ function ProblemTestOutput({ testcases, overallStatus, overallTime, overallMemor
   return (
     <div className="flex flex-col gap-4 w-full h-full p-4 bg-gradient-to-r from-gray-100 to-purple-100 rounded-lg shadow-md overflow-y-scroll text-gray-800">
       {/* Overall Status */}
-      <div className={`w-fit px-4 py-2 rounded-full text-white font-bold ${overallStatus === "Accepted" ? "bg-green-500" : "bg-red-500"}`}>
+      <div className={`w-fit px-4 py-2 rounded-full text-white font-bold ${overallStatus === "ACCEPTED" ? "bg-green-500" : "bg-red-500"}`}>
         {overallStatus}
       </div>
 
       {/* Overall Time and Memory */}
-      {(overallStatus === "Accepted" || overallStatus === "Wrong Answer" || overallStatus === "Time Limit Exceeded") && (
+      {(overallStatus === "ACCEPTED" || overallStatus === "WRONG_ANSWER" || overallStatus === "TIME_LIMIT_EXCEEDED" || overallStatus==="MEMORY_LIMIT_EXCEEDED") && (
         <div className="flex justify-evenly items-center w-full gap-8 text-lg">
           <div className="flex items-center gap-2">
             <MdTimer className="text-2xl" />
-            <span>{`${overallTime} s` || "-"}</span>
+            <span>{`${overallTime} ms` || "-"}</span>
           </div>
           <div className="flex items-center gap-2">
             <MdMemory className="text-2xl" />
-            <span>{`${(overallMemory/1000).toFixed(3)} mb` || "-"}</span>
+            <span>{`${(overallMemory).toFixed(3)} mb` || "-"}</span>
           </div>
         </div>
       )}
@@ -34,10 +34,10 @@ function ProblemTestOutput({ testcases, overallStatus, overallTime, overallMemor
             key={index}
             className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-all 
             ${tab === index ? "border-4 border-violet-800" : "border-2 border-gray-400"} 
-            ${executionResults?.[index]?.status?.description === "Accepted" ? "bg-green-200" : "bg-red-200"}`}
+            ${executionResults?.[index]?.status === "ACCEPTED" ? "bg-green-200" : "bg-red-200"}`}
             onClick={() => setTab(index)}
           >
-            <FaDotCircle className="text-lg" color={executionResults?.[index]?.status.description === "Accepted" ? "green" : "red"} />
+            <FaDotCircle className="text-lg" color={executionResults?.[index]?.status === "ACCEPTED" ? "green" : "red"} />
             TestCase {index + 1}
           </button>
         ))}
@@ -49,11 +49,11 @@ function ProblemTestOutput({ testcases, overallStatus, overallTime, overallMemor
         <div className="flex justify-around text-xl font-semibold">
           <div className="flex items-center gap-2">
             <MdTimer />
-            <span>{`${executionResults?.[tab]?.time} s` || "-"}</span>
+            <span>{`${executionResults?.[tab]?.time_taken} ms` || "-"}</span>
           </div>
           <div className="flex items-center gap-2">
             <MdMemory />
-            <span>{`${(executionResults?.[tab]?.memory/1000).toFixed(3)} mb` || "-"}</span>
+            <span>{`${((executionResults?.[tab]?.memory_used | 0)/1000).toFixed(3)} mb` || "-"}</span>
           </div>
         </div>
 

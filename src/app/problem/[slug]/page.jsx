@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect, useRef } from 'react'
 import { useUser } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
+import { useRouter , useParams} from 'next/navigation';
 import axios from 'axios';
 import ProblemDescription from '@/components/Problem/ProblemDescription';
 import ProblemSubmissions from '@/components/Problem/ProblemSubmissions';
@@ -12,14 +12,14 @@ import { Editor } from '@monaco-editor/react';
 import { Toaster, toast } from 'react-hot-toast';
 import { boilerplate } from '@/app/constants';
 import ErrorComponent from '@/components/ErrorComponent';
-import { Button, Spinner } from 'flowbite-react';
+import { Spinner } from 'flowbite-react';
 import { MdCancel } from 'react-icons/md';
 import { FaCheck } from 'react-icons/fa';
 import Loading from '@/app/loading';
 import getExecutionResults from '@/utils/execution.utils';
 
-function Page({ params }) {
-  const { slug } = params;
+function Page() {
+  const { slug } = useParams();
   // basic states
   const editorRef = useRef(0);
   const [editorKey, setEditorKey] = useState(0);
@@ -46,7 +46,6 @@ function Page({ params }) {
   const [testExecutionResults, setTestExecutionResults] = useState(null);
   const [testExecutionError, setTestExecutionError] = useState(null);
 
-
   // result states
   const [executionResults, setExecutionResults] = useState(null);
   const [executionStatus, setExecutionStatus] = useState(null);
@@ -60,7 +59,6 @@ function Page({ params }) {
       .get(`/api/problem/?slug=${slug}${'&'}userId=${user?.id}`)
       .then((response) => {
         const data = response.data;
-        console.log(data);
         if (data?.problem) {
           setProblem(data.problem);
           setExampleTestCases(data.problem.testcases);
@@ -81,40 +79,44 @@ function Page({ params }) {
       .finally(() => {
         setLoading(false);
       });
-  }, [slug,user?.id]);
-
-
+  }, [slug, user?.id]);
 
   const handleCodeRun = () => {
     setRunning(true);
-      getExecutionResults(code[language], language, exampleTestCases)
+    setTestExecutionError(null); // Clear previous errors
+    
+    getExecutionResults(code[language], language, exampleTestCases)
       .then((response) => {
-        const data = response.data;
-        const { overallStatus, overallMemory, overallTime, executionResults } = data;
+        const { overallStatus, overallMemory, overallTime, executionResults } = response;
+        
         setTestOverallStatus(overallStatus);
         setTestOverallTime(overallTime);
         setTestOverallMemory(overallMemory);
         setTestExecutionResults(executionResults);
 
-        if (overallStatus !== "Accepted") {
+        // Fixed status comparison - using "ACCEPTED" instead of "Accepted"
+        if (overallStatus !== "ACCEPTED") {
           toast.error(overallStatus);
+          // Look for errors in execution results
           for (let i = 0; i < executionResults.length; i++) {
-            const testError = executionResults[i].error || executionResults[i].stderr || executionResults[i].compilation_output;
+            const testError = executionResults[i].error || 
+                             executionResults[i].stderr || 
+                             executionResults[i].compilation_output;
             if (testError) {
               setTestExecutionError(testError);
               break;
             }
           }
         }
-        else
+        else {
           toast.success("Executed Successfully!");
-
-
+        }
       })
       .catch((error) => {
         const errorResponse = error.response;
         const errorMessage = errorResponse ? errorResponse.data?.error : error.message;
-        toast.error(`An error occured- ${errorMessage}`);
+        toast.error(`An error occurred - ${errorMessage}`);
+        setTestExecutionError(errorMessage);
       })
       .finally(() => {
         setRunning(false);
@@ -135,54 +137,66 @@ function Page({ params }) {
     }
 
     setSubmitting(true);
+    setExecutionError(null); // Clear previous errors
 
+    let executionData = {overallStatus:null,overallMemory:null,overallTime:null,executionResults:null};
     // Submit the code for execution
     getExecutionResults(code[language], language, problem.testcases)
       .then((response) => {
-        const { overallStatus, overallMemory, overallTime, executionResults } = response.data;
+        executionData = response;
+        setExecutionStatus(()=>executionData.overallStatus);
+        setExecutionTime(()=>executionData.overallTime);
+        setExecutionMemory(()=>executionData.overallMemory);
+        setExecutionResults(()=>executionData.executionResults);
 
-        setExecutionStatus(overallStatus);
-        setExecutionTime(overallTime);
-        setExecutionMemory(overallMemory);
-        setExecutionResults(executionResults);
-
-        // Register the submission
-        return axios.post('/api/submission', {
+        const submissionData = {
           userId: user.id,
           problemId: problem.id,
+          solved:problem.solved,
           code: code[language],
           language,
-          status: overallStatus,
-          time: overallTime,
-          memory: overallMemory,
-        });
+          status: executionData.overallStatus,
+          time: executionData.overallTime,
+          memory: executionData.overallMemory
+        };
+
+        // Register the submission
+        return axios.post('/api/submission', submissionData);
       })
       .then((response) => {
         const submissionInstance = response.data.submissionInstance;
         setCurrentSubmission(submissionInstance);
-      })
-      .catch((error) => {
-        const errorMessage = error.response?.data?.error || error.message || "An error occured";
-        toast.error(errorMessage);
-      })
-      .finally(() => {
-        if (executionStatus !== "ACCEPTED") {
-          toast.error(executionStatus);
-          const errorResult = executionResults?.find((result) => result.error || result.stderr || result.compilation_output);
+
+        // Handle success/failure after submission is recorded
+        if (executionData.overallStatus === "ACCEPTED") {
+          toast.success("Accepted!!");
+        } 
+        else if(response.status === 500){
+          toast.error("Internal Server Error");
+        }
+        else {
+          toast.error(executionData.overallStatus);
+          // Look for errors in execution results
+          const errorResult = executionData?.executionResults?.find((result) => 
+            result.error || result.stderr || result.compilation_output
+          );
           if (errorResult) {
-            setExecutionError(errorResult.error);
-          }
-        } else {
-          if (currentSubmission) {
-            toast.success("Accepted!!");
+            const errorMsg = errorResult.error || errorResult.stderr || errorResult.compilation_output;
+            setExecutionError(errorMsg);
           }
         }
+      })
+      .catch((error) => {
+        const errorMessage = error.response?.data?.error || error.message || "An error occurred";
+        toast.error(errorMessage);
+        setExecutionError(errorMessage);
+      })
+      .finally(() => {
         setIsTabVisible({ ...isTabVisible, ['result']: true })
         setTab('result');
         setSubmitting(false);
       });
   };
-
 
   return (
     <div className='w-full min-h-screen pt-20 bg-gradient'>
@@ -211,12 +225,10 @@ function Page({ params }) {
                   </div>
                 </div>
 
-
                 <div className='flex flex-wrap w-fit gap-2 p-2 text-white'>
                   {allTabs.map((tabName, index) => (
                     <div
                       key={index}
-                      // ${tab === tabName ? " from-purple-500 to-purple-300" : "from-purple-300 to-zinc-300"}
                       className={`flex p-0 ${tab === tabName ? " bg-gray-700 border border-green-400" : "button-gradient2"} font-normal rounded-md ${!isTabVisible[tabName] ? "hidden" : ""}`}>
                       <button
                         key={index}
@@ -263,7 +275,7 @@ function Page({ params }) {
                   <ProblemTestCases
                     problem={problem}
                     exampleTestCases={exampleTestCases}
-                    setExampleTestCases={setExampleTestCases} /> //need to give correct props
+                    setExampleTestCases={setExampleTestCases} />
                 }
                 {
                   tab === "test-output"
@@ -339,11 +351,8 @@ function Page({ params }) {
                   }}
                   theme='vs-dark'
                 />
-
               </div>
-
             </div>
-
       }
       <Toaster />
     </div>

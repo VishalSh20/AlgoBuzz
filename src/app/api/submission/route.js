@@ -6,9 +6,10 @@ export async function POST(request) {
     try {
         console.log("Came here to submit");
         const requestBody = await request.json(); 
-        const {userId,problemId,code,language,status,memory=-1,time_taken=-1} = requestBody;
+        console.log(requestBody);
+        const {userId,problemId,code,language,status,memory=-1,time_taken=-1,solved} = requestBody;
 
-        console.log(userId,problemId,code,language,status);
+        console.log(userId,problemId,code,language,status,solved);
         if([userId,problemId,code,language,status].some(val=>!val))
             return NextResponse.json({error:"All Details are Required"},{status:400});
  
@@ -27,16 +28,18 @@ export async function POST(request) {
             data:submissionData
         });
 
-        await prisma.user.update({
-            where:{
-                id:userId
-            },
-            data:{
-                problemsSolved: {
-                    increment: 1
+        if(!solved){
+            await prisma.user.update({
+                where:{
+                    id:userId
+                },
+                data:{
+                    problemsSolved: {
+                        increment: 1
+                    }
                 }
-            }
-        })
+            });
+        }
         
         return NextResponse.json({message:"Problem Submitted Successfully",submissionInstance},{status:200});
 
