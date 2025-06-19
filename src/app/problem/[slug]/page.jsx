@@ -9,14 +9,26 @@ import ProblemTestCases from '@/components/Problem/ProblemTestCases';
 import ProblemTestOutput from '@/components/Problem/ProblemTestOutput';
 import ProblemResult from '@/components/Problem/ProblemResult';
 import { Editor } from '@monaco-editor/react';
-import { Toaster, toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 import { boilerplate } from '@/app/constants';
 import ErrorComponent from '@/components/ErrorComponent';
-import { Spinner } from 'flowbite-react';
-import { MdCancel } from 'react-icons/md';
-import { FaCheck } from 'react-icons/fa';
 import Loading from '@/app/loading';
 import getExecutionResults from '@/utils/execution.utils';
+
+// shadcn/ui imports
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+// Icons
+import { MdCancel, MdPlayArrow, MdSend } from 'react-icons/md';
+import { FaCheck, FaSpinner } from 'react-icons/fa';
+import { AlertCircle, Code, FileText, TestTube, PlayCircle, Send } from 'lucide-react';
 
 function Page() {
   const { slug } = useParams();
@@ -29,9 +41,15 @@ function Page() {
   const [pageErrorMessage, setPageErrorMessage] = useState(null);
   const [pageErrorCode, setPageErrorCode] = useState(0);
   const [executionError, setExecutionError] = useState(null);
-  const [allTabs, setAllTabs] = useState(['Description', 'Submissions', 'testcases', 'test-output', 'result']);
-  const [tab, setTab] = useState('Description');
-  const [isTabVisible, setIsTabVisible] = useState({ 'Description': true, 'Submissions': true, 'testcases': true, 'test-output': false, 'result': false });
+  const [allTabs, setAllTabs] = useState(['description', 'submissions', 'testcases', 'test-output', 'result']);
+  const [tab, setTab] = useState('description');
+  const [isTabVisible, setIsTabVisible] = useState({ 
+    'description': true, 
+    'submissions': true, 
+    'testcases': true, 
+    'test-output': false, 
+    'result': false 
+  });
   const [problem, setProblem] = useState({});
   const [language, setLanguage] = useState("cpp");
   const [code, setCode] = useState(boilerplate);
@@ -83,7 +101,7 @@ function Page() {
 
   const handleCodeRun = () => {
     setRunning(true);
-    setTestExecutionError(null); // Clear previous errors
+    setTestExecutionError(null);
     
     getExecutionResults(code[language], language, exampleTestCases)
       .then((response) => {
@@ -94,10 +112,8 @@ function Page() {
         setTestOverallMemory(overallMemory);
         setTestExecutionResults(executionResults);
 
-        // Fixed status comparison - using "ACCEPTED" instead of "Accepted"
         if (overallStatus !== "ACCEPTED") {
           toast.error(overallStatus);
-          // Look for errors in execution results
           for (let i = 0; i < executionResults.length; i++) {
             const testError = executionResults[i].error || 
                              executionResults[i].stderr || 
@@ -137,10 +153,10 @@ function Page() {
     }
 
     setSubmitting(true);
-    setExecutionError(null); // Clear previous errors
+    setExecutionError(null);
 
     let executionData = {overallStatus:null,overallMemory:null,overallTime:null,executionResults:null};
-    // Submit the code for execution
+    
     getExecutionResults(code[language], language, problem.testcases)
       .then((response) => {
         executionData = response;
@@ -160,14 +176,12 @@ function Page() {
           memory: executionData.overallMemory
         };
 
-        // Register the submission
         return axios.post('/api/submission', submissionData);
       })
       .then((response) => {
         const submissionInstance = response.data.submissionInstance;
         setCurrentSubmission(submissionInstance);
 
-        // Handle success/failure after submission is recorded
         if (executionData.overallStatus === "ACCEPTED") {
           toast.success("Accepted!!");
         } 
@@ -176,7 +190,6 @@ function Page() {
         }
         else {
           toast.error(executionData.overallStatus);
-          // Look for errors in execution results
           const errorResult = executionData?.executionResults?.find((result) => 
             result.error || result.stderr || result.compilation_output
           );
@@ -198,99 +211,95 @@ function Page() {
       });
   };
 
+  const getTabIcon = (tabName) => {
+    switch(tabName) {
+      case 'description': return <FileText className="w-4 h-4" />;
+      case 'submissions': return <Code className="w-4 h-4" />;
+      case 'testcases': return <TestTube className="w-4 h-4" />;
+      case 'test-output': return <PlayCircle className="w-4 h-4" />;
+      case 'result': return <Send className="w-4 h-4" />;
+      default: return null;
+    }
+  };
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (pageErrorCode) {
+    return <ErrorComponent code={pageErrorCode} message={pageErrorMessage} />;
+  }
+
   return (
     <div className='w-full min-h-screen pt-20 bg-gradient'>
-      {
-        (loading)
-          ?
-          <Loading />
-          :
-          pageErrorCode
-            ?
-            <ErrorComponent code={pageErrorCode} message={pageErrorMessage} />
-            :
-            <div className='flex flex-col md:flex-row min-h-screen'>
+      <div className='flex flex-col md:flex-row min-h-screen'>
+        {/* Mobile Layout */}
+        <div className="md:hidden flex flex-col min-h-screen">
+          {/* Problem Info Section */}
+          <Card className="m-4 mb-2 bg-gray-900/90 border-gray-700 text-white">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xl font-bold">
+                  {problem.id}. {problem.title}
+                </CardTitle>
+                {problem.solved && (
+                  <Badge variant="secondary" className="bg-green-100 text-green-800">
+                    <FaCheck className="w-3 h-3 mr-1" />
+                    Solved
+                  </Badge>
+                )}
+              </div>
+              <div className="flex gap-4 text-sm text-muted-foreground">
+                <span>Submissions: {problem.totalSubmissions}</span>
+                <span>Accepted: {problem.acceptedSubmissions}</span>
+              </div>
+            </CardHeader>
+          </Card>
 
-              <div className="flex flex-col p-8 pb-16 gap-4 w-full md:w-[45%] overflow-scroll h-screen bg-gray-900 text-white">
-                <div className='flex flex-col w-full gap-1'>
-                  <h2 className='font-bold text-2xl'>{problem.id}.{problem.title}</h2>
-                  <div className='flex justify-between text-gray-200'>
-                    <span>Total Submissions:{problem.totalSubmissions}</span>
-                    <span>Accepted:{problem.acceptedSubmissions}</span>
-                    {
-                      problem.solved
-                      &&
-                      <FaCheck className='text-green-400' />
-                    }
-                  </div>
-                </div>
+          {/* Tabs for Mobile */}
+          <div className="px-4">
+            <Tabs value={tab} onValueChange={setTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-3 bg-gray-800">
+                {allTabs.filter(t => isTabVisible[t]).slice(0, 3).map((tabName) => (
+                  <TabsTrigger 
+                    key={tabName} 
+                    value={tabName} 
+                    className="flex items-center gap-1 text-gray-300 bg-gray-700 hover:bg-gray-600 hover:text-white data-[state=active]:bg-primary data-[state=active]:text-white"
+                  >
+                    {getTabIcon(tabName)}
+                    <span className="capitalize text-xs">{tabName === 'test-output' ? 'Output' : tabName}</span>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
 
-                <div className='flex flex-wrap w-fit gap-2 p-2 text-white'>
-                  {allTabs.map((tabName, index) => (
-                    <div
-                      key={index}
-                      className={`flex p-0 ${tab === tabName ? " bg-gray-700 border border-green-400" : "button-gradient2"} font-normal rounded-md ${!isTabVisible[tabName] ? "hidden" : ""}`}>
-                      <button
-                        key={index}
-                        className='p-2'
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setTab(tabName);
-                        }}
-                      >{tabName}</button>
-                      {
-                        (tabName === "test-output" || tabName === "result")
-                        &&
-                        <button
-                          onClick={() => {
-                            setTab(tabName === 'result' ? 'Submissions' : 'Description');
-                            setIsTabVisible({ ...isTabVisible, [tabName]: false });
-                          }}
-                        ><MdCancel /></button>
-                      }
-                    </div>
-                  )
-                  )
-                  }
-                </div>
-
-                {
-                  tab === "Description"
-                  &&
-                  <ProblemDescription
-                    problem={problem} />
-                }
-                {
-                  tab === "Submissions"
-                  &&
+              <div className="mt-4 max-h-96 overflow-y-auto">
+                {tab === "description" && <ProblemDescription problem={problem} />}
+                {tab === "submissions" && (
                   <ProblemSubmissions
                     userId={user?.id}
                     problem={problem}
                     setEditorLanguage={setLanguage}
-                    setCode={setCode} />
-                }
-                {
-                  tab === "testcases"
-                  &&
+                    setCode={setCode}
+                  />
+                )}
+                {tab === "testcases" && (
                   <ProblemTestCases
                     problem={problem}
                     exampleTestCases={exampleTestCases}
-                    setExampleTestCases={setExampleTestCases} />
-                }
-                {
-                  tab === "test-output"
-                  &&
+                    setExampleTestCases={setExampleTestCases}
+                  />
+                )}
+                {tab === "test-output" && (
                   <ProblemTestOutput
                     testcases={exampleTestCases}
                     overallStatus={testOverallStatus}
                     overallMemory={testOverallMemory}
                     overallTime={testOverallTime}
                     executionResults={testExecutionResults}
-                    executionError={testExecutionError} />
-                }
-                {
-                  tab === "result"
-                  &&
+                    executionError={testExecutionError}
+                  />
+                )}
+                {tab === "result" && (
                   <ProblemResult
                     testcases={problem.testcases}
                     submissionInstance={currentSubmission}
@@ -299,62 +308,276 @@ function Page() {
                     executionTime={executionTime}
                     executionMemory={executionMemory}
                     executionError={executionError}
-                    submitting={submitting} />
-                }
+                    submitting={submitting}
+                  />
+                )}
               </div>
+            </Tabs>
+          </div>
 
-              <div className="w-full p-2 h-screen md:w-[55%] bg-gray-800">
-                <div className="flex justify-between w-full text-white p-2">
-                  <select className="p-2 focus:border-green-400 bg-gray-700 rounded" value={language}
-                    onChange={e => {
-                      setLanguage(e.target.value);
-                      setEditorKey(key => key + 1);
-                    }
-                    }
+          {/* Code Editor for Mobile */}
+          <Card className="m-4 mt-2 flex-1 bg-gray-900/90 border-gray-700 text-white">
+            <CardHeader className="pb-2">
+              <div className="flex justify-between items-center">
+                <Select value={language} onValueChange={(value) => {
+                  setLanguage(value);
+                  setEditorKey(key => key + 1);
+                }}>
+                  <SelectTrigger className="w-32 bg-gray-800 text-white border-gray-700">
+                    <SelectValue className="text-white" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 text-white border-gray-700">
+                    <SelectItem value="cpp" className="hover:bg-gray-700 cursor-pointer">C++</SelectItem>
+                    <SelectItem value="python" className="hover:bg-gray-700 cursor-pointer">Python</SelectItem>
+                    <SelectItem value="java" className="hover:bg-gray-700 cursor-pointer">Java</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={running || submitting}
+                    onClick={handleCodeRun}
+                    className="bg-gray-800 text-white border-gray-700 hover:bg-gray-600 hover:text-white hover:border-gray-500"
                   >
-                    <option value="cpp">C++</option>
-                    <option value="python">Python</option>
-                    <option value="java">Java</option>
-                  </select>
-                  <div className='flex gap-2'>
-                    <button className=' bg-gray-700 rounded p-2 px-4 border border-gray-500 hover:border-green-400'
-                      disabled={running || submitting}
-                      onClick={handleCodeRun}
-                    >
-                      {running ? <Spinner color="purple" /> : "Run"}
-                    </button>
-
-                    <button className=' bg-gray-700 rounded p-2 px-4 border border-gray-500 hover:border-green-400'
-                      disabled={running || submitting}
-                      onClick={handleCodeSubmission}
-                    >
-                      {submitting ? <Spinner color="purple" /> : "Submit"}
-                    </button>
-                  </div>
+                    {running ? <FaSpinner className="w-4 h-4 animate-spin" /> : <PlayCircle className="w-4 h-4" />}
+                    Run
+                  </Button>
+                  <Button
+                    size="sm"
+                    disabled={running || submitting}
+                    onClick={handleCodeSubmission}
+                    className="bg-primary text-white hover:bg-primary/90 hover:text-white"
+                  >
+                    {submitting ? <FaSpinner className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                    Submit
+                  </Button>
                 </div>
-                <Editor
-                  height="90vh"
-                  key={editorKey}
-                  value={code[language]}
-                  defaultLanguage={language}
-                  defaultValue={boilerplate[language]}
-                  onMount={(editor) => {
-                    editorRef.current = editor;
-                    editorRef.current.focus();
-                  }}
-                  onChange={(value) => {
-                    const newCode = { ...code, [language]: value }
-                    setCode(code => newCode);
-                  }}
-                  options={{
-                    minimap: { enabled: false },
-                  }}
-                  theme='vs-dark'
-                />
               </div>
-            </div>
-      }
-      <Toaster />
+            </CardHeader>
+            <CardContent className="p-0">
+              <Editor
+                height="40vh"
+                key={editorKey}
+                value={code[language]}
+                defaultLanguage={language}
+                defaultValue={boilerplate[language]}
+                onMount={(editor) => {
+                  editorRef.current = editor;
+                  editorRef.current.focus();
+                }}
+                onChange={(value) => {
+                  const newCode = { ...code, [language]: value }
+                  setCode(code => newCode);
+                }}
+                options={{
+                  minimap: { enabled: false },
+                }}
+                theme='vs-dark'
+              />
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Desktop Layout with Resizable Panels */}
+        <div className="hidden md:flex w-full h-screen">
+          <ResizablePanelGroup direction="horizontal" className="min-h-screen">
+            {/* Problem Description Panel */}
+            <ResizablePanel defaultSize={45} minSize={30} maxSize={70}>
+              <Card className="m-4 h-full flex flex-col bg-gray-900/90 border-gray-700 text-white">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-2xl font-bold">
+                      {problem.id}. {problem.title}
+                    </CardTitle>
+                    {problem.solved && (
+                      <Badge variant="secondary" className="bg-green-100 text-green-800">
+                        <FaCheck className="w-4 h-4 mr-1" />
+                        Solved
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  <div className="flex justify-between items-center text-sm text-muted-foreground">
+                    <div className="flex gap-4">
+                      <span>Total Submissions: {problem.totalSubmissions}</span>
+                      <span>Accepted: {problem.acceptedSubmissions}</span>
+                    </div>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="flex-1 overflow-hidden">
+                  {/* Custom Tab Navigation */}
+                  <div className="flex flex-wrap gap-2 mb-4 p-2">
+                    {allTabs.map((tabName) => (
+                      isTabVisible[tabName] && (
+                        <div
+                          key={tabName}
+                          className={`flex items-center rounded-lg border ${
+                            tab === tabName 
+                              ? "bg-primary text-primary-foreground border-primary" 
+                              : "bg-gray-800 text-gray-300 border-gray-700 hover:bg-gray-600 hover:text-white hover:border-gray-500"
+                          }`}
+                        >
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={`flex items-center gap-2 h-8 px-3 rounded-l-lg rounded-r-none border-0 ${
+                              tab === tabName 
+                                ? "text-primary-foreground hover:text-primary-foreground hover:bg-primary/90" 
+                                : "text-gray-300 hover:text-white hover:bg-gray-600"
+                            }`}
+                            onClick={() => setTab(tabName)}
+                          >
+                            {getTabIcon(tabName)}
+                            <span className="capitalize text-xs">
+                              {tabName === 'test-output' ? 'Output' : tabName}
+                            </span>
+                          </Button>
+                          {(tabName === "test-output" || tabName === "result") && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className={`h-8 w-8 p-0 rounded-r-lg rounded-l-none border-l ${
+                                tab === tabName 
+                                  ? "text-primary-foreground hover:text-primary-foreground hover:bg-primary/80 border-primary-foreground/20" 
+                                  : "text-gray-300 hover:bg-red-600 hover:text-white border-gray-600"
+                              }`}
+                              onClick={() => {
+                                setTab(tabName === 'result' ? 'submissions' : 'description');
+                                setIsTabVisible({ ...isTabVisible, [tabName]: false });
+                              }}
+                            >
+                              <MdCancel className="h-3 w-3" />
+                            </Button>
+                          )}
+                        </div>
+                      )
+                    ))}
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto">
+                    {tab === "description" && <ProblemDescription problem={problem} />}
+                    {tab === "submissions" && (
+                      <ProblemSubmissions
+                        userId={user?.id}
+                        problem={problem}
+                        setEditorLanguage={setLanguage}
+                        setCode={setCode}
+                      />
+                    )}
+                    {tab === "testcases" && (
+                      <ProblemTestCases
+                        problem={problem}
+                        exampleTestCases={exampleTestCases}
+                        setExampleTestCases={setExampleTestCases}
+                      />
+                    )}
+                    {tab === "test-output" && (
+                      <ProblemTestOutput
+                        testcases={exampleTestCases}
+                        overallStatus={testOverallStatus}
+                        overallMemory={testOverallMemory}
+                        overallTime={testOverallTime}
+                        executionResults={testExecutionResults}
+                        executionError={testExecutionError}
+                      />
+                    )}
+                    {tab === "result" && (
+                      <ProblemResult
+                        testcases={problem.testcases}
+                        submissionInstance={currentSubmission}
+                        executionResults={executionResults}
+                        executionStatus={executionStatus}
+                        executionTime={executionTime}
+                        executionMemory={executionMemory}
+                        executionError={executionError}
+                        submitting={submitting}
+                      />
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </ResizablePanel>
+
+            <ResizableHandle withHandle />
+
+            {/* Code Editor Panel */}
+            <ResizablePanel defaultSize={55} minSize={30}>
+              <Card className="m-4 h-full flex flex-col bg-gray-900/90 border-gray-700 text-white">
+                <CardHeader className="pb-4">
+                  <div className="flex justify-between items-center">
+                    <Select value={language} onValueChange={(value) => {
+                      setLanguage(value);
+                      setEditorKey(key => key + 1);
+                    }}>
+                      <SelectTrigger className="w-40 bg-gray-800 text-white border-gray-700">
+                        <SelectValue className="text-white" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 text-white border-gray-700">
+                        <SelectItem value="cpp" className="hover:bg-gray-700 cursor-pointer">C++</SelectItem>
+                        <SelectItem value="python" className="hover:bg-gray-700 cursor-pointer">Python</SelectItem>
+                        <SelectItem value="java" className="hover:bg-gray-700 cursor-pointer">Java</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        disabled={running || submitting}
+                        onClick={handleCodeRun}
+                        className="bg-gray-800 text-white border-gray-700 hover:bg-gray-600 hover:text-white hover:border-gray-500"
+                      >
+                        {running ? (
+                          <FaSpinner className="w-4 h-4 animate-spin mr-2" />
+                        ) : (
+                          <PlayCircle className="w-4 h-4 mr-2" />
+                        )}
+                        Run
+                      </Button>
+                      <Button
+                        disabled={running || submitting}
+                        onClick={handleCodeSubmission}
+                        className="bg-gray-800 text-white border-gray-700 hover:bg-gray-600 hover:text-white hover:border-gray-500"
+                      >
+                        {submitting ? (
+                          <FaSpinner className="w-4 h-4 animate-spin mr-2" />
+                        ) : (
+                          <Send className="w-4 h-4 mr-2" />
+                        )}
+                        Submit
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="flex-1 p-0">
+                  <Editor
+                    height="calc(100vh - 180px)"
+                    key={editorKey}
+                    value={code[language]}
+                    defaultLanguage={language}
+                    defaultValue={boilerplate[language]}
+                    onMount={(editor) => {
+                      editorRef.current = editor;
+                      editorRef.current.focus();
+                    }}
+                    onChange={(value) => {
+                      const newCode = { ...code, [language]: value }
+                      setCode(code => newCode);
+                    }}
+                    options={{
+                      minimap: { enabled: false },
+                    }}
+                    theme='vs-dark'
+                  />
+                </CardContent>
+              </Card>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </div>
+      </div>
     </div>
   )
 }

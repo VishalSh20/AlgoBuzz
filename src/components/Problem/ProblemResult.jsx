@@ -76,6 +76,7 @@ function ProblemResult({ testcases, submissionInstance, executionResults, execut
                     disabled>
                     {testcases[testsChecked].input}
                   </textarea>
+                  
 
                   <label className="font-bold text-sm mt-2 text-red-600">Code's Output:</label>
                   <textarea className='resize-none bg-gray-200 p-2 rounded-lg w-full text-sm'
