@@ -22,7 +22,7 @@ async function registerUser(data){
     const user = await prisma.user.create({
       data:{
         id,
-        name:(first_name ? first_name : "") + (last_name ? last_name : ""),
+        name:(first_name ? first_name : "") + " "+ (last_name ? last_name : ""),
         username,
         email,
         imageurl:image_url||"",

@@ -19,10 +19,10 @@ function generateSlug(title) {
 }
 
 export async function POST(req,_){
-    console.log("Here");
     const reqBody = await req.json();
-    const {title,difficulty,Statement,constraints,topics} = reqBody;
-    if([title,difficulty,Statement,constraints,topics].some(val=>(val===undefined)))
+    const {title,difficulty,statement,constraints,topics} = reqBody;
+    console.log(title,difficulty,statement,constraints,topics);
+    if([title,difficulty,statement,constraints,topics].some(val=>(val===undefined)))
         return NextResponse.json({message:"All details are required"},{status:400})
 
     const slug = generateSlug(title);
@@ -30,7 +30,7 @@ export async function POST(req,_){
         console.log(slug);
         const createdProblem = await prisma.problem.create({
             data:{
-                title,slug,difficulty,Statement,constraints,topics:topics.map(t=>convertToTopic(t))
+                title,slug,difficulty,statement,constraints,topics:topics.map(t=>convertToTopic(t))
             }
         });
     
@@ -44,8 +44,8 @@ export async function POST(req,_){
 export async function PUT(req){
     const id = parseInt(req.nextUrl.searchParams.get('id'));
     const reqBody = await req.json();
-    const {title,difficulty,Statement,constraints,topics} = reqBody;
-    if([title,difficulty,Statement,constraints,topics].some(val=>(val===undefined)))
+    const {title,difficulty,statement,constraints,topics} = reqBody;
+    if([title,difficulty,statement,constraints,topics].some(val=>(val===undefined)))
         return NextResponse.json({message:"All details are required"},{status:400})
 
     const slug = generateSlug(title);
@@ -56,7 +56,7 @@ export async function PUT(req){
                 id
             },
             data:{
-                title,slug,difficulty,Statement,constraints,topics:topics.map(t=>convertToTopic(t))
+                title,slug,difficulty,statement,constraints,topics:topics.map(t=>convertToTopic(t))
             }
         });
     
@@ -73,7 +73,7 @@ export async function GET(req){
     const slug = req.nextUrl.searchParams.get('slug');
     const query = req.nextUrl.searchParams.get('query') || "";
     const page = req.nextUrl.searchParams.get('page') || 1;
-    const skip = (page-1)*5;
+    const skip = (page-1)*8;
     const take=8;
     let topics = req.nextUrl.searchParams.getAll('topics');
     topics = topics.length>0 ? topics : Object.values(Topic);
@@ -88,17 +88,18 @@ export async function GET(req){
                 where:{slug},
                 include:{
                     solutions:true,
-                    testcases:true,
-                    examples:true
+                    examples:true,
+                    testcases:true
                 }
             });
-
+            
             if(problem){
             const totalSubmissions = await prisma.submission.count({
                 where:{
                     problemId:problem.id
                 }
             });
+
             const acceptedSubmissions = await prisma.submission.count({
                 where:{
                     AND:[
@@ -145,7 +146,7 @@ export async function GET(req){
                             {title:{
                                 contains:query
                             }},
-                            {Statement:{
+                            {statement:{
                                 contains:query
                             }},
                         ]},
@@ -157,6 +158,7 @@ export async function GET(req){
                     title:true,
                     slug:true,
                     difficulty:true,
+                    statement:true,
                     topics:true,
                 },
                 skip:skip,
@@ -180,7 +182,7 @@ export async function GET(req){
                             {title:{
                                 contains:query
                             }},
-                            {Statement:{
+                            {statement:{
                                 contains:query
                             }},
                         ]},

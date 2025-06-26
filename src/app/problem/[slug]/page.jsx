@@ -79,7 +79,7 @@ function Page() {
         const data = response.data;
         if (data?.problem) {
           setProblem(data.problem);
-          setExampleTestCases(data.problem.testcases);
+          setExampleTestCases(data.problem.examples);
         }
         else {
           setPageErrorMessage(data.error);
@@ -233,7 +233,8 @@ function Page() {
   return (
     <div className='w-full min-h-screen pt-20 bg-gradient'>
       <div className='flex flex-col md:flex-row min-h-screen'>
-        {/* Mobile Layout */}
+        
+       {/* Mobile Layout */}
         <div className="md:hidden flex flex-col min-h-screen">
           {/* Problem Info Section */}
           <Card className="m-4 mb-2 bg-gray-900/90 border-gray-700 text-white">
@@ -257,9 +258,9 @@ function Page() {
           </Card>
 
           {/* Tabs for Mobile */}
-          <div className="px-4">
-            <Tabs value={tab} onValueChange={setTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 bg-gray-800">
+          <div className="px-4 flex-1 flex flex-col min-h-0">
+            <Tabs value={tab} onValueChange={setTab} className="w-full flex flex-col flex-1 min-h-0">
+              <TabsList className="grid w-full grid-cols-3 bg-gray-800 mb-4">
                 {allTabs.filter(t => isTabVisible[t]).slice(0, 3).map((tabName) => (
                   <TabsTrigger 
                     key={tabName} 
@@ -272,51 +273,54 @@ function Page() {
                 ))}
               </TabsList>
 
-              <div className="mt-4 max-h-96 overflow-y-auto">
-                {tab === "description" && <ProblemDescription problem={problem} />}
-                {tab === "submissions" && (
-                  <ProblemSubmissions
-                    userId={user?.id}
-                    problem={problem}
-                    setEditorLanguage={setLanguage}
-                    setCode={setCode}
-                  />
-                )}
-                {tab === "testcases" && (
-                  <ProblemTestCases
-                    problem={problem}
-                    exampleTestCases={exampleTestCases}
-                    setExampleTestCases={setExampleTestCases}
-                  />
-                )}
-                {tab === "test-output" && (
-                  <ProblemTestOutput
-                    testcases={exampleTestCases}
-                    overallStatus={testOverallStatus}
-                    overallMemory={testOverallMemory}
-                    overallTime={testOverallTime}
-                    executionResults={testExecutionResults}
-                    executionError={testExecutionError}
-                  />
-                )}
-                {tab === "result" && (
-                  <ProblemResult
-                    testcases={problem.testcases}
-                    submissionInstance={currentSubmission}
-                    executionResults={executionResults}
-                    executionStatus={executionStatus}
-                    executionTime={executionTime}
-                    executionMemory={executionMemory}
-                    executionError={executionError}
-                    submitting={submitting}
-                  />
-                )}
+              {/* Tab Content with proper height management */}
+              <div className="flex-1 min-h-0 bg-gray-800/50 rounded-lg p-4">
+                <div className="h-full overflow-y-auto">
+                  {tab === "description" && <ProblemDescription problem={problem} />}
+                  {tab === "submissions" && (
+                    <ProblemSubmissions
+                      userId={user?.id}
+                      problem={problem}
+                      setEditorLanguage={setLanguage}
+                      setCode={setCode}
+                    />
+                  )}
+                  {tab === "testcases" && (
+                    <ProblemTestCases
+                      problem={problem}
+                      exampleTestCases={exampleTestCases}
+                      setExampleTestCases={setExampleTestCases}
+                    />
+                  )}
+                  {tab === "test-output" && (
+                    <ProblemTestOutput
+                      testcases={exampleTestCases}
+                      overallStatus={testOverallStatus}
+                      overallMemory={testOverallMemory}
+                      overallTime={testOverallTime}
+                      executionResults={testExecutionResults}
+                      executionError={testExecutionError}
+                    />
+                  )}
+                  {tab === "result" && (
+                    <ProblemResult
+                      testcases={problem.testcases}
+                      submissionInstance={currentSubmission}
+                      executionResults={executionResults}
+                      executionStatus={executionStatus}
+                      executionTime={executionTime}
+                      executionMemory={executionMemory}
+                      executionError={executionError}
+                      submitting={submitting}
+                    />
+                  )}
+                </div>
               </div>
             </Tabs>
           </div>
 
           {/* Code Editor for Mobile */}
-          <Card className="m-4 mt-2 flex-1 bg-gray-900/90 border-gray-700 text-white">
+          <Card className="m-4 mt-2 bg-gray-900/90 border-gray-700 text-white">
             <CardHeader className="pb-2">
               <div className="flex justify-between items-center">
                 <Select value={language} onValueChange={(value) => {
@@ -358,7 +362,7 @@ function Page() {
             </CardHeader>
             <CardContent className="p-0">
               <Editor
-                height="40vh"
+                height="35vh"
                 key={editorKey}
                 value={code[language]}
                 defaultLanguage={language}
@@ -380,6 +384,7 @@ function Page() {
           </Card>
         </div>
 
+        {/* Desktop Layout with Resizable Panels */}
         {/* Desktop Layout with Resizable Panels */}
         <div className="hidden md:flex w-full h-screen">
           <ResizablePanelGroup direction="horizontal" className="min-h-screen">
@@ -407,9 +412,9 @@ function Page() {
                   </div>
                 </CardHeader>
 
-                <CardContent className="flex-1 overflow-hidden">
+                <CardContent className="flex-1 flex flex-col min-h-0 overflow-hidden">
                   {/* Custom Tab Navigation */}
-                  <div className="flex flex-wrap gap-2 mb-4 p-2">
+                  <div className="flex flex-wrap gap-2 mb-4 p-2 flex-shrink-0">
                     {allTabs.map((tabName) => (
                       isTabVisible[tabName] && (
                         <div
@@ -457,45 +462,48 @@ function Page() {
                     ))}
                   </div>
 
-                  <div className="flex-1 overflow-y-auto">
-                    {tab === "description" && <ProblemDescription problem={problem} />}
-                    {tab === "submissions" && (
-                      <ProblemSubmissions
-                        userId={user?.id}
-                        problem={problem}
-                        setEditorLanguage={setLanguage}
-                        setCode={setCode}
-                      />
-                    )}
-                    {tab === "testcases" && (
-                      <ProblemTestCases
-                        problem={problem}
-                        exampleTestCases={exampleTestCases}
-                        setExampleTestCases={setExampleTestCases}
-                      />
-                    )}
-                    {tab === "test-output" && (
-                      <ProblemTestOutput
-                        testcases={exampleTestCases}
-                        overallStatus={testOverallStatus}
-                        overallMemory={testOverallMemory}
-                        overallTime={testOverallTime}
-                        executionResults={testExecutionResults}
-                        executionError={testExecutionError}
-                      />
-                    )}
-                    {tab === "result" && (
-                      <ProblemResult
-                        testcases={problem.testcases}
-                        submissionInstance={currentSubmission}
-                        executionResults={executionResults}
-                        executionStatus={executionStatus}
-                        executionTime={executionTime}
-                        executionMemory={executionMemory}
-                        executionError={executionError}
-                        submitting={submitting}
-                      />
-                    )}
+                  {/* Tab Content with proper scrolling */}
+                  <div className="flex-1 min-h-0 bg-gray-800/20 rounded-lg p-4">
+                    <div className="h-full overflow-y-auto overflow-x-hidden">
+                      {tab === "description" && <ProblemDescription problem={problem} />}
+                      {tab === "submissions" && (
+                        <ProblemSubmissions
+                          userId={user?.id}
+                          problem={problem}
+                          setEditorLanguage={setLanguage}
+                          setCode={setCode}
+                        />
+                      )}
+                      {tab === "testcases" && (
+                        <ProblemTestCases
+                          problem={problem}
+                          exampleTestCases={exampleTestCases}
+                          setExampleTestCases={setExampleTestCases}
+                        />
+                      )}
+                      {tab === "test-output" && (
+                        <ProblemTestOutput
+                          testcases={exampleTestCases}
+                          overallStatus={testOverallStatus}
+                          overallMemory={testOverallMemory}
+                          overallTime={testOverallTime}
+                          executionResults={testExecutionResults}
+                          executionError={testExecutionError}
+                        />
+                      )}
+                      {tab === "result" && (
+                        <ProblemResult
+                          testcases={problem.testcases}
+                          submissionInstance={currentSubmission}
+                          executionResults={executionResults}
+                          executionStatus={executionStatus}
+                          executionTime={executionTime}
+                          executionMemory={executionMemory}
+                          executionError={executionError}
+                          submitting={submitting}
+                        />
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>

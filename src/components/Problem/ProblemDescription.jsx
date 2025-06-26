@@ -8,18 +8,18 @@ function ProblemDescription({problem}) {
     <div className='w-full bg-transparent text-gray-200'>
             
         <div className="flex flex-col items-baseline gap-10 min-h-full p-2">
-            <pre className='text-gray-200 font-mono text-wrap'>{problem.Statement}</pre>
+            <pre className='text-gray-200 font-mono text-wrap'>{problem.statement}</pre>
 
             <div className="flex flex-col gap-4">
                 {problem.examples?.map((example,index)=>(
                     <div className='flex flex-col gap-2 p-2' key={index}>
-                        <h2>Example {index}</h2>
+                        <h2>Example {index+1}</h2>
                         <span>Input: {example.inputText}</span>
                         <span>Output: {example.outputText}</span>
                         {
-                        example.explaination
+                        example.explanation
                         &&
-                        <span>Explaination: {example.explaination}</span>
+                        <span>Explanation: {example.explanation}</span>
                         }
                     </div>
                 ))}

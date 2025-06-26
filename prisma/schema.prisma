@@ -27,7 +27,7 @@ model Problem {
   slug        String       @unique
   difficulty  Difficulty
   topics      Topic[]
-  Statement   String
+  statement   String
   constraints String[]
   examples    Example[]
   submissions Submission[]
@@ -42,13 +42,13 @@ model Problem {
 
 model Example {
   id           Int       @id @default(autoincrement())
-  ProblemId    Int
-  Explaination String
-  InputText    String
-  OutputText   String
-  Problem      Problem   @relation(fields: [ProblemId], references: [id], onDelete: Cascade)
-  testcaseId   Int?     @unique
-  Testcase     TestCase? @relation(fields: [testcaseId],references: [id])
+  problemId    Int
+  explanation String
+  inputText    String
+  outputText   String
+  Problem      Problem   @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  input        String
+  output       String
 }
 
 model TestCase {
@@ -56,9 +56,6 @@ model TestCase {
   input     String
   output    String
   ProblemId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Example   Example? 
   Problem   Problem  @relation(fields: [ProblemId], references: [id], onDelete: Cascade)
 }
 
@@ -91,7 +88,7 @@ model Submission {
 }
 
 model Solution {
-  id Int @id
+  id Int @id @default(autoincrement())
   problemId Int 
   code String
   language Language

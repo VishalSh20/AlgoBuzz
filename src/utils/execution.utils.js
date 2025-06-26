@@ -15,7 +15,7 @@ export default async function getExecutionResults(
 
             while (Date.now() - pollStartTime < pollDuration) {
                 const resultUrl = `${process.env.NEXT_PUBLIC_EXECUTION_WORKER_URL}/submission?token=${token}`;
-                const resultResponse = await axios.get(resultUrl);
+                const resultResponse = await axios.get(resultUrl,{withCredentials:true});
                 const resultResponseData = resultResponse.data?.[0];
 
                 if (
