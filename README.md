@@ -6,8 +6,7 @@ Welcome to **AlgoBuzz**, a one-stop solution for coding enthusiasts! Designed to
 
 ## **Features**  
 
-- **100+ DSA Problems**: Tackle a wide range of curated problems designed to strengthen your data structures and algorithms skills.  
-- **CF-Buddy**: A dedicated **Codeforces Interface** that simplifies the process of participating in contests by providing real-time updates, efficient workflows, and performance insights.  
+- **50+ DSA Problems**: Tackle a wide range of curated problems designed to strengthen your data structures and algorithms skills.   
 - **Online IDE**: Write, test, and debug your code with our integrated, fast, and reliable online IDE.  
 
 ---
@@ -23,7 +22,7 @@ AlgoBuzz is a robust, scalable application built using modern tools and architec
 
 ### **Supporting Services**  
 1. **Code-Execution Worker**: Handles secure and isolated code execution for the online IDE.  
-   - [https://github.com/VishalSh20/code-solver-worker](#)  
+   - [https://github.com/VishalSh20/code-smoothie](#)  
  
 
 These microservices are hosted on dedicated servers for optimal performance and reliability.  
